@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>שלושת מעגלי המנהיגות והניהול - אבחון עצמי</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app__header">
+        <a href="../" class="back-link">← חזרה למרכז השאלונים</a>
+        <img src="../logo.avif" alt="מירב ים חן" class="app__logo" />
+        <div class="app__badge">שלושת מעגלי המנהיגות והניהול</div>
+        <h1>אבחון עצמי</h1>
+        <p class="app__subtitle">
+          עונים על כל שאלה לפי הסקאלה 1-3, ומתקדמים שלב אחר שלב.
+        </p>
+      </header>
+
+      <main class="card" id="card">
+        <section class="screen screen--active" id="intro">
+          <h2>הנחיות קצרות</h2>
+          <ul class="steps">
+            <li>לפניך 27 שאלות המחולקות לשלושה מעגלי מנהיגות.</li>
+            <li>עבור כל היגד, דרג את עצמך בסולם של 1 עד 3.</li>
+            <li>1 = קיים במידה מועטה או לא קיים כלל</li>
+            <li>2 = קיים לעיתים, אך דורש חיזוק</li>
+            <li>3 = קיים באופן משמעותי ומהווה חוזקה שלי</li>
+            <li>אין תשובות נכונות או לא נכונות — זו הזדמנות לשיקוף עצמי.</li>
+          </ul>
+          <div class="actions actions--center">
+            <button class="primary" id="start">מתחילים</button>
+            <button class="ghost" id="fill-random">מילוי בדיקה אוטומטי</button>
+          </div>
+        </section>
+
+        <section class="screen" id="question-screen" aria-live="polite">
+          <div class="progress">
+            <span id="progress-text">שאלה 1 מתוך 27</span>
+            <div class="progress__bar">
+              <div class="progress__fill" id="progress-fill"></div>
+            </div>
+          </div>
+          <div class="question">
+            <div class="question__statement" id="question-statement"></div>
+          </div>
+          <div class="scale">
+            <label class="scale__item">
+              <input type="radio" name="score" value="1" />
+              <span class="scale__value">1</span>
+              <span class="scale__label" id="scale-label-1"></span>
+            </label>
+            <label class="scale__item">
+              <input type="radio" name="score" value="2" />
+              <span class="scale__value">2</span>
+              <span class="scale__label" id="scale-label-2"></span>
+            </label>
+            <label class="scale__item">
+              <input type="radio" name="score" value="3" />
+              <span class="scale__value">3</span>
+              <span class="scale__label" id="scale-label-3"></span>
+            </label>
+          </div>
+          <div class="actions actions--bottom">
+            <button class="ghost" id="prev">חזרה להנחיות</button>
+            <button class="primary" id="next" disabled>הבא</button>
+          </div>
+        </section>
+
+        <section class="screen screen--scroll" id="results">
+          <h2>התוצאות שלך</h2>
+          <p class="app__subtitle">
+            סכמו את הציון בכל מעגל וראו איפה הכוחות המרכזיים שלכם.
+          </p>
+          <div class="results" id="results-grid"></div>
+          <div class="actions results-actions">
+            <button class="ghost" id="back-to-questions">חזרה לשאלות</button>
+            <button class="primary" id="to-details">לפירוט לפי תת-קטגוריות</button>
+            <button class="ghost" id="restart">מילוי מחדש</button>
+          </div>
+        </section>
+
+        <section class="screen screen--scroll" id="details">
+          <h2>פירוט לפי תת-קטגוריות</h2>
+          <p class="app__subtitle">
+            ציונים מפורטים לפי כל תת-קטגוריה בכל מעגל.
+          </p>
+          <div class="details" id="details-grid"></div>
+          <div class="actions results-actions">
+            <button class="ghost" id="back-to-results">חזרה לתוצאות</button>
+            <button class="primary" id="copy-results">העתק תוצאות</button>
+            <button class="ghost" id="back-to-questions-details">חזרה לשאלות</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
