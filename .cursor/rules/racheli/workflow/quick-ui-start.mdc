@@ -1,0 +1,87 @@
+---
+description: "Quick UI workflow - project start, branch creation, docs init"
+alwaysApply: false
+---
+
+# Quick UI Project - Start
+
+**Trigger:** Beginning of a new agent conversation for a UI-only or UI-mostly project
+
+## Actions
+
+### 1. Create Feature Branch
+
+```bash
+git checkout main
+git pull origin main
+git checkout -b ui/<short-description>
+```
+
+**Branch naming:** `ui/<short-description>`
+- Keep it lowercase, use hyphens
+- Examples: `ui/todo-app`, `ui/landing-page`, `ui/dashboard`
+
+### 2. Initialize Project Documentation
+
+Create these files in the `docs/` folder:
+
+#### `spec.md`
+```markdown
+# Specification
+
+## Overview
+[One paragraph describing what this app does]
+
+## Features
+- [ ] Feature 1
+- [ ] Feature 2
+
+## User Flows
+[Key user interactions]
+
+## Constraints
+[Any limitations or requirements]
+```
+
+#### `design.md`
+```markdown
+# Technical Design
+
+## Stack
+- [Framework/libraries]
+
+## Architecture
+[How the app is structured]
+
+## Key Components
+[Main components and their responsibilities]
+
+## Data Model
+[If applicable]
+
+## External Dependencies
+[APIs, services, etc.]
+```
+
+#### `work.md`
+```markdown
+# Work Log
+Log here not features, but Racheli's development flow, logic and style, so we can extract insights from it later on.
+
+## Preferences Discovered
+[Things Racheli prefers that should become rules]
+
+## Workflow Insights
+[What worked well, what to improve]
+
+## Rule Candidates
+[Specific patterns to add to racheli-personal-rules]
+refresh this section only during the finish stage
+```
+
+
+## Reminders
+
+- `spec.md` and `design.md` reflect **current state only** - no history, no tradeoffs
+- Update them as the system evolves
+- `work.md` is for meta-insights about YOUR preferences, not the project

@@ -1,0 +1,119 @@
+---
+description: "BMAD: Design thinking process"
+alwaysApply: false
+---
+
+# Design Thinking Process
+
+**Trigger:** Building something user-facing, need to understand users, or designing new features/products
+
+## Actions
+
+### 1. Define Challenge
+
+Establish the design challenge:
+- What problem or opportunity are you exploring?
+- Who are the primary users or stakeholders?
+- What constraints exist?
+- What does success look like?
+
+Create a clear **challenge statement** to guide the process.
+
+### 2. EMPATHIZE - Build User Understanding
+
+Methods to understand users:
+- User interviews
+- Observation / shadowing
+- Surveys
+- Empathy mapping
+
+Gather insights on:
+- What did users say, think, do, and feel?
+- What pain points emerged?
+- What surprised you?
+- What patterns do you see?
+
+### 3. DEFINE - Frame the Problem
+
+Transform observations into actionable statements:
+
+**Point of View (POV) Statement:**
+> "[User type] needs [need] because [insight]"
+
+**How Might We (HMW) Questions:**
+- Open the solution space
+- Example: "How might we make [pain point] easier?"
+
+Ask:
+- What's the REAL problem we're solving?
+- Why does this matter to users?
+- What assumptions are we making?
+
+### 4. IDEATE - Generate Solutions
+
+Divergent thinking phase:
+- Generate 15-30 ideas minimum
+- Build on others' ideas
+- Go for wild AND practical
+- Defer judgment
+
+Select top concepts by asking:
+- Which ideas excite you most?
+- Which address the core user need?
+- Which are feasible given constraints?
+
+Pick 2-3 concepts to prototype.
+
+### 5. PROTOTYPE - Make Ideas Tangible
+
+Create low-fidelity prototypes:
+- Paper sketches
+- Wireframes
+- Clickable mockups
+- Physical models
+
+Define what you're testing:
+- What's the minimum to test assumptions?
+- What should users be able to do?
+- What can you fake vs build?
+
+### 6. TEST - Validate with Users
+
+Plan testing:
+- Test with 5-7 users
+- Define tasks they'll attempt
+- Prepare questions to ask
+- Plan how to capture feedback
+
+Collect feedback:
+- What worked well?
+- Where did they struggle?
+- What surprised them (and you)?
+- What would they change?
+
+Synthesize:
+- What assumptions were validated/invalidated?
+- What needs to change?
+- What new insights emerged?
+
+### 7. Plan Next Iteration
+
+Based on testing:
+- What refinements are needed?
+- What's the priority action?
+- How will you measure success?
+
+Determine next cycle:
+- Need more empathy work?
+- Should you reframe the problem?
+- Ready to refine prototype?
+- Time to pilot with real users?
+
+
+## Reminders
+
+- Keep users at the center of every decision
+- Prototype beats discussion - make ideas tangible quickly
+- Embrace failure as feedback, not defeat
+- Observe what users DO, not just what they SAY
+- Never give time estimates - focus on what, not when

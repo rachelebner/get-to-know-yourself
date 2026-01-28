@@ -1,0 +1,131 @@
+---
+description: "Setup new project with git repo and rules submodule"
+alwaysApply: false
+---
+
+# New Project Setup
+
+**Trigger:** Starting a brand new project from scratch
+
+## Environment
+
+| Machine | Base Path |
+|---------|-----------|
+| Work laptop | `/Users/rebner/Documents/Code/PERSONAL/` |
+| Home laptop | `/Users/rebner/Documents/Code/` |
+
+---
+
+## Actions
+
+### 1. Create Local Project
+
+```bash
+mkdir <project-name>
+cd <project-name>
+git init
+```
+
+### 2. Add Personal Rules Submodule
+
+```bash
+# Add as submodule (source files)
+git submodule add git@github.com:rachelebner/racheli-personal-rules.git .cursor/rules-src
+
+# Build Cursor rules from source
+./.cursor/rules-src/cursor-config/build.sh .
+```
+
+### 3. Verify Setup
+
+```bash
+# Check source submodule
+ls .cursor/rules-src/
+# Should see: personas/, workflow/, cursor-config/, README.md
+
+# Check generated Cursor rules
+ls .cursor/rules/racheli/
+# Should see: personas/*.mdc, workflow/*.mdc
+```
+
+### 4. Add Generated Rules to .gitignore
+
+```bash
+echo ".cursor/rules/racheli/" >> .gitignore
+```
+
+(Generated rules are rebuilt from source, no need to commit them)
+
+### 5. Initial Commit
+
+```bash
+git add .
+git commit -m "init: project setup with personal rules submodule"
+```
+
+### 6. Create GitHub Repository (when ready)
+
+```bash
+# 1. Go to https://github.com/new
+# 2. Name: <project-name>
+# 3. Set to Private
+# 4. Create (don't add README)
+
+# Then link and push:
+git remote add origin git@github.com:rachelebner/<project-name>.git
+git push -u origin main
+```
+
+---
+
+## Updating Rules
+
+When `racheli-personal-rules` is updated:
+
+```bash
+# Pull latest source
+cd .cursor/rules-src
+git pull origin main
+cd ../..
+
+# Rebuild Cursor rules
+./.cursor/rules-src/cursor-config/build.sh .
+
+# Commit submodule update
+git add .cursor/rules-src
+git commit -m "chore: update personal rules"
+```
+
+---
+
+## Cloning an Existing Project
+
+When cloning a project that uses this rules submodule:
+
+```bash
+# Clone with submodules
+git clone --recurse-submodules <project-url>
+cd <project-name>
+
+# Build Cursor rules
+./.cursor/rules-src/cursor-config/build.sh .
+```
+
+If you forgot `--recurse-submodules`:
+
+```bash
+git submodule update --init --recursive
+./.cursor/rules-src/cursor-config/build.sh .
+```
+
+---
+
+## Quick Reference
+
+| Task | Command |
+|------|---------|
+| Add submodule | `git submodule add <url> <path>` |
+| Clone with submodules | `git clone --recurse-submodules <url>` |
+| Init submodules after clone | `git submodule update --init --recursive` |
+| Update submodule | `git submodule update --remote` |
+| Rebuild rules | `./.cursor/rules-src/cursor-config/build.sh .` |
