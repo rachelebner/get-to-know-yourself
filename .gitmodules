@@ -1,3 +1,3 @@
 [submodule ".cursor/rules-src"]
 	path = .cursor/rules-src
-	url = git@github.com:rachelebner/racheli-personal-rules.git
+	url = https://github.com/rachelebner/racheli-personal-rules.git

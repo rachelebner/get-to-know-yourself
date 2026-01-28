@@ -38,4 +38,55 @@ Focus only on workflow, process, usefulness of rules etc. ignore the actual proj
 - Run a consistency check between docs before finishing
 - Consider a checklist for "what goes where" (spec vs design vs local README)
 
+---
+
+## Reference: Submodule Commit Workflow
+
+This project uses a git submodule at `.cursor/rules-src`. Here's how to commit changes properly.
+
+> **Note:** The submodule uses HTTPS URL (not SSH) for CI/CD compatibility (e.g., Netlify). When cloning or adding submodules, always use HTTPS: `https://github.com/rachelebner/racheli-personal-rules.git`
+
+### The Golden Rule
+**Always commit & push the submodule BEFORE the parent repo.**
+
+The parent repo stores a pointer to a specific commit in the submodule. If you push the parent first, it may reference a commit that doesn't exist on the remote.
+
+### Workflow
+
+```bash
+# 1. Make changes in submodule
+cd .cursor/rules-src
+# ... edit files ...
+
+# 2. Commit & push submodule
+git add -A
+git commit -m "your message"
+git push origin main
+
+# 3. Go back to parent repo
+cd ../..
+
+# 4. Commit parent (includes updated submodule pointer)
+git add .cursor/rules-src  # stages the new commit pointer
+git add <other-files>
+git commit -m "your message"
+git push origin main
+```
+
+### Useful Commands
+
+```bash
+# Check submodule status
+git submodule status
+
+# Update submodule to latest remote
+git submodule update --remote
+
+# Push parent + all submodules in one go (if submodules are committed)
+git push --recurse-submodules=on-demand
+```
+
+### Common Pitfall
+If you see `(modified content)` next to the submodule in `git status`, it means the submodule has uncommitted changes. Commit those first before committing the parent.
+
 
