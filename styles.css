@@ -24,16 +24,11 @@
   margin-bottom: 16px;
 }
 
-.hub-header__logo-placeholder {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 72px;
-  height: 72px;
-  font-size: 32px;
-  background: linear-gradient(135deg, var(--primary) 0%, #8b9bff 100%);
+.hub-header__logo-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
   border-radius: 20px;
-  box-shadow: var(--shadow-primary);
 }
 
 .hub-header__title {
@@ -181,10 +176,10 @@
     padding: 32px 20px 24px;
   }
 
-  .hub-header__logo-placeholder {
-    width: 60px;
-    height: 60px;
-    font-size: 28px;
+  .hub-header__logo-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
   }
 
   .hub-header__title {
