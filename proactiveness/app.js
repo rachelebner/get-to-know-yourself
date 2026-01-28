@@ -216,7 +216,12 @@ const updateQuestion = () => {
   progressText.textContent = `שאלה ${question.id} מתוך ${questions.length}`;
   const progress = ((currentIndex + 1) / questions.length) * 100;
   progressFill.style.width = `${progress}%`;
-  prevButton.disabled = currentIndex === 0;
+  prevButton.disabled = false;
+  if (currentIndex === 0) {
+    prevButton.textContent = "חזרה להנחיות";
+  } else {
+    prevButton.textContent = "חזרה";
+  }
   nextButton.textContent = currentIndex === questions.length - 1 ? "סיום" : "הבא";
   scoreInputs.forEach((input) => {
     input.checked = Number(input.value) === answers[currentIndex];
@@ -508,7 +513,9 @@ nextButton.addEventListener("click", () => {
 });
 
 prevButton.addEventListener("click", () => {
-  if (currentIndex > 0) {
+  if (currentIndex === 0) {
+    updateScreen(introScreen);
+  } else {
     currentIndex -= 1;
     updateQuestion();
   }
