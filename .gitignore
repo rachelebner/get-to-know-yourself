@@ -1,9 +1,5 @@
 .cursor/rules/racheli/
 .DS_Store
 
-# Source questionnaire documents
-*.pdf
-*.docx
-
-# Temp upload folder (not tracked)
+# Temp upload folder (not tracked - move files to questionnaire folders)
 _inbox/

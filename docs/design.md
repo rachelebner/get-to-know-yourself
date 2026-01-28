@@ -24,12 +24,16 @@
 │   ├── index.html
 │   ├── styles.css          # Imports ../shared.css + local overrides
 │   ├── app.js
-│   └── README.md           # Documents this questionnaire's specific structure
+│   ├── content.json        # Hebrew content
+│   ├── README.md           # Documents this questionnaire's specific structure
+│   └── *.pdf / *.docx      # Source document(s) - original questionnaire file
 └── [future-questionnaire]/ # Same structure
     ├── index.html
     ├── styles.css
     ├── app.js
-    └── README.md
+    ├── content.json
+    ├── README.md
+    └── *.pdf / *.docx      # Source document(s)
 ```
 
 ### Design Decision: Minimal Shared Styles
@@ -306,6 +310,40 @@ Every questionnaire needs a link back to the hub.
 Question types, scoring logic, analysis patterns, and result formats vary by questionnaire. Document these in a local `README.md` within each questionnaire folder.
 
 See `proactiveness/README.md` for the first example.
+
+### Source Documents (MANDATORY)
+
+**Every questionnaire MUST include its original source document(s) in the questionnaire folder.**
+
+Source documents are the original PDF, DOCX, or other files that contain:
+- The original questions and scoring methodology
+- Theoretical background and research references
+- Interpretation guidelines and category descriptions
+
+**Requirements:**
+- Store source files directly in the questionnaire folder (e.g., `proactiveness/שאלון.pdf`)
+- Keep original Hebrew filenames for traceability
+- Commit source documents to git (they are part of the project)
+- Reference the source in the questionnaire's `README.md`
+
+**Current source documents:**
+```
+proactiveness/שאלון אבחון מנופי הפרואקטיביות כולל פענוח.pdf
+communication-styles/שאלון סגנונות תקשורת 2020.docx
+situational-leadership/[source document needed]
+engagement-drivers/מנועי המחוברות קווין קרוז שאלון.pdf
+leadership-circles/שאלון אבחון עצמי 3 מעגלי המנהיגות והניהול.docx
+managerial-courage/שאלון אומץ (קליין וקליין).pdf
+assertiveness/שאלון אסרטיביות.rtf
+```
+
+**Rationale:**
+- Source of truth for questions, scoring, and interpretations
+- Enables verification and correction of content
+- Preserves attribution and methodology
+- Essential for future maintenance and enhancements
+
+---
 
 ### Content Separation: Hebrew Text in JSON
 
