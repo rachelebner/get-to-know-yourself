@@ -15,25 +15,31 @@ A vanilla HTML/CSS/JS hub for personality questionnaires. Each questionnaire is 
 /
 ├── index.html              # Hub page - questionnaire directory
 ├── styles.css              # Hub styles
+├── shared.css              # Minimal shared styles (tokens + buttons)
 ├── docs/
-│   ├── spec.md             # This file
-│   └── retro.md            # Project retrospective & insights
-├── proactiveness/          # Existing questionnaire
+│   ├── spec.md             # This file (requirements)
+│   ├── design.md           # Technical implementation details
+│   └── retro.md            # Retrospective, workflow insights, session logs
+├── proactiveness/          # Questionnaire 1
 │   ├── index.html
 │   ├── styles.css
-│   └── app.js
+│   ├── app.js
+│   └── README.md           # This questionnaire's specific structure
 └── [questionnaire-name]/   # Future questionnaires follow same pattern
     ├── index.html
     ├── styles.css
-    └── app.js
+    ├── app.js
+    └── README.md
 ```
 
 ### Design Principles
 
-- Each questionnaire is **self-contained** (own HTML/CSS/JS)
+- **Minimal shared styles** - `shared.css` contains only design tokens and buttons
+- **Mostly self-contained** - each questionnaire has its own layout/component CSS
 - No build tools, no frameworks - vanilla everything
-- Similar visual style across questionnaires (not enforced, just encouraged)
 - Mobile-ready by default
+
+See `docs/design.md` for implementation details.
 
 ---
 
@@ -72,41 +78,24 @@ Inherit from existing proactiveness questionnaire:
 
 ## Questionnaire Mini-App Structure
 
-Each questionnaire follows this pattern (based on proactiveness example):
+Each questionnaire is a single-page app with multiple screens. The specific structure (question types, scoring, analysis) varies per questionnaire.
 
-### Screens (sections within single HTML)
+### Common Elements
 
-1. **Intro** - Instructions, "Start" button
-2. **Questions** - One question at a time, progress bar, prev/next navigation
-3. **Results** - Summary scores
-4. **Analysis** - Detailed interpretation (optional)
-5. **Insights** - Actionable recommendations (optional)
+- **Screen flow:** Intro → Questions → Results (+ optional analysis screens)
+- **Progress indication:** Visual feedback during question answering
+- **Navigation:** Back to hub link, prev/next within questionnaire
+- **Results export:** "העתק תוצאות" button copies Markdown to clipboard
 
-### Common UI Components
+### What Varies Per Questionnaire
 
-- Progress bar with fill animation
-- Scale inputs (1-5 radio buttons styled as pills)
-- Primary button (filled, shadow)
-- Ghost button (outlined)
-- Card container with screen transitions
+- Question format (bipolar scale, multiple choice, etc.)
+- Scoring algorithm and categories
+- Number and type of result/analysis screens
+- Interpretation logic
 
-### Navigation
-
-- Back to hub: Link or button to return to main index.html
-- Within questionnaire: Prev/Next buttons, screen transitions
-
-### Results Export
-
-At the end of each questionnaire, provide a **"העתק תוצאות"** (Copy Results) button that:
-- Generates a Markdown-formatted summary of results
-- Copies to clipboard using Clipboard API (with execCommand fallback)
-- Can be pasted into email, notes, etc.
-
-**Markdown format includes:**
-- Questionnaire title
-- Scores by category
-- Analysis/interpretation per category
-- Personal insights summary
+**See each questionnaire's `README.md` for its specific structure.**  
+Example: `proactiveness/README.md`
 
 ---
 
@@ -118,6 +107,15 @@ At the end of each questionnaire, provide a **"העתק תוצאות"** (Copy Re
 - [ ] Shared component library extraction
 - [ ] Mobile share button (Web Share API → native share sheet)
 - [ ] RTF export format option
+
+---
+
+## P3 Features (Later)
+
+- [ ] **Test mode toggle** - Hub-level toggle that, when enabled:
+  - Auto-fills random answers when entering any questionnaire
+  - Skips directly to results/analysis screen
+  - Useful for quickly testing all questionnaires without manual input
 
 ---
 
@@ -136,3 +134,10 @@ At the end of each questionnaire, provide a **"העתק תוצאות"** (Copy Re
 - RTL direction set on `<html lang="he" dir="rtl">`
 - CSS custom properties for theming
 - Vanilla JS for interactivity (no dependencies)
+
+---
+
+## See Also
+
+- `docs/design.md` - Technical implementation details, component patterns
+- `proactiveness/README.md` - First questionnaire's specific structure

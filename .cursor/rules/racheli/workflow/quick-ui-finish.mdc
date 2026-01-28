@@ -12,7 +12,7 @@ alwaysApply: false
 - [ ] Cleanup pass completed (`quick-ui-cleanup.md`)
 - [ ] `spec.md` reflects current system
 - [ ] `design.md` reflects current architecture
-- [ ] `work.md` captures insights for rule evolution
+- [ ] `retro.md` captures insights for rule evolution
 - [ ] All tests pass (if applicable)
 - [ ] App runs without errors
 
@@ -59,7 +59,7 @@ git push origin --delete ui/<branch-name>
 
 ### Transfer Insights to Rules
 
-Review `work.md` and consider:
+Review `retro.md` and consider:
 
 1. **New rules to add** - patterns that should apply to future projects
 2. **Workflow improvements** - update these workflow files

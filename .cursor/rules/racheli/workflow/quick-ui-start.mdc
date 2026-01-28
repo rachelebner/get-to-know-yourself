@@ -63,20 +63,29 @@ Create these files in the `docs/` folder:
 [APIs, services, etc.]
 ```
 
-#### `work.md`
+#### `retro.md`
 ```markdown
-# Work Log
-Log here not features, but Racheli's development flow, logic and style, so we can extract insights from it later on.
+# Project Retrospective & Insights
 
-## Preferences Discovered
-[Things Racheli prefers that should become rules]
+Accumulated learnings and reflections from building [project name].
 
-## Workflow Insights
-[What worked well, what to improve]
+Focus only on workflow, process, usefulness of rules etc. ignore the actual project's design and code.
 
-## Rule Candidates
-[Specific patterns to add to racheli-personal-rules]
-refresh this section only during the finish stage
+---
+
+## Session: [DATE] - [Title]
+
+### What We Did
+- [Key accomplishments]
+
+### Decisions Made
+- [Important choices and rationale]
+
+### Workflow Observations
+- [What worked well, what to improve]
+
+### Rule Candidates
+- [Patterns to add to racheli-personal-rules]
 ```
 
 
@@ -84,4 +93,4 @@ refresh this section only during the finish stage
 
 - `spec.md` and `design.md` reflect **current state only** - no history, no tradeoffs
 - Update them as the system evolves
-- `work.md` is for meta-insights about YOUR preferences, not the project
+- `retro.md` is for meta-insights about YOUR preferences/workflow, not the project features
