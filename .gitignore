@@ -1,2 +1,6 @@
 .cursor/rules/racheli/
 .DS_Store
+
+# Source questionnaire documents
+*.pdf
+*.docx

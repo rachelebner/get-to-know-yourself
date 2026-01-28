@@ -304,6 +304,49 @@ Question types, scoring logic, analysis patterns, and result formats vary by que
 
 See `proactiveness/README.md` for the first example.
 
+### Content Separation: Hebrew Text in JSON
+
+**All Hebrew content must be stored separately from JavaScript logic.**
+
+Each questionnaire folder contains:
+```
+questionnaire-name/
+├── index.html
+├── styles.css
+├── app.js          # Logic only - no Hebrew strings
+└── content.json    # All Hebrew text (questions, insights, descriptions)
+```
+
+**What goes in `content.json`:**
+- Questions (text, options)
+- Category/type titles and descriptions
+- Analysis text and interpretations
+- Insight content and recommendations
+- UI labels (button text, screen titles) - optional
+
+**What stays in `app.js`:**
+- Scoring logic and algorithms
+- Screen navigation
+- DOM manipulation
+- Event handlers
+- Category/type configuration (IDs, question mappings)
+
+**Loading pattern:**
+```javascript
+// At app initialization
+const content = await fetch('./content.json').then(r => r.json());
+
+// Usage
+const questionText = content.questions[currentIndex].text;
+const typeDescription = content.types[typeId].description;
+```
+
+**Rationale:**
+- Content editors can modify Hebrew text without touching code
+- Cleaner separation of concerns
+- Easier to review/proofread content
+- Future-proofs for potential localization
+
 ### What's Likely Shared
 
 - Basic screen flow (intro → questions → results)

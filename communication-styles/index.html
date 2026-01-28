@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>שאלון סגנונות תקשורת</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app__header">
+        <a href="../" class="back-link">← חזרה למרכז השאלונים</a>
+        <div class="app__badge" id="badge">סגנונות תקשורת</div>
+        <h1 id="header-title">שאלון סגנונות תקשורת</h1>
+        <p class="app__subtitle" id="header-subtitle">
+          גלה את סגנון התקשורת הדומיננטי שלך
+        </p>
+      </header>
+
+      <main class="card" id="card">
+        <section class="screen screen--active" id="intro">
+          <h2 id="intro-title">הנחיות</h2>
+          <p class="intro__text" id="intro-instructions"></p>
+          <p class="intro__note" id="intro-note"></p>
+          <div class="actions actions--center">
+            <button class="primary" id="start">התחל</button>
+            <button class="ghost" id="fill-random">מילוי בדיקה אוטומטי</button>
+          </div>
+        </section>
+
+        <section class="screen" id="question-screen" aria-live="polite">
+          <div class="progress">
+            <span id="progress-text">שאלה 1 מתוך 40</span>
+            <div class="progress__bar">
+              <div class="progress__fill" id="progress-fill"></div>
+            </div>
+          </div>
+          <div class="question">
+            <div class="question__text" id="question-text"></div>
+          </div>
+          <div class="answer-buttons">
+            <button class="answer-btn answer-btn--yes" id="answer-yes" data-value="yes">כן</button>
+            <button class="answer-btn answer-btn--no" id="answer-no" data-value="no">לא</button>
+          </div>
+          <div class="actions actions--bottom">
+            <button class="ghost" id="prev" disabled>חזרה</button>
+            <button class="primary" id="next" disabled>הבא</button>
+          </div>
+        </section>
+
+        <section class="screen screen--scroll" id="results">
+          <h2 id="results-title">התוצאות שלך</h2>
+          <p class="app__subtitle" id="results-subtitle">סגנונות התקשורת שלך</p>
+          <div class="chart-container">
+            <div class="chart" id="chart">
+              <div class="chart__bar" id="bar-supportive">
+                <div class="chart__fill"></div>
+                <span class="chart__score"></span>
+              </div>
+              <div class="chart__bar" id="bar-analytical">
+                <div class="chart__fill"></div>
+                <span class="chart__score"></span>
+              </div>
+              <div class="chart__bar" id="bar-expressive">
+                <div class="chart__fill"></div>
+                <span class="chart__score"></span>
+              </div>
+              <div class="chart__bar" id="bar-driver">
+                <div class="chart__fill"></div>
+                <span class="chart__score"></span>
+              </div>
+            </div>
+            <div class="chart__labels" id="chart-labels">
+              <span>תומך</span>
+              <span>אנליטי</span>
+              <span>מוחצן</span>
+              <span>משימתי</span>
+            </div>
+            <div class="chart__axis">
+              <span>0</span>
+              <span>5</span>
+              <span>10</span>
+            </div>
+          </div>
+          <p class="blend-note" id="blend-note"></p>
+          <div class="actions results-actions">
+            <button class="ghost" id="back-to-questions">חזרה לשאלות</button>
+            <button class="primary" id="to-analysis">לניתוח מפורט</button>
+            <button class="ghost" id="restart">מילוי מחדש</button>
+          </div>
+        </section>
+
+        <section class="screen screen--scroll" id="analysis">
+          <h2 id="analysis-title">ניתוח מפורט</h2>
+          <p class="app__subtitle" id="analysis-subtitle">הסגנונות הדומיננטיים שלך</p>
+          
+          <!-- Top 2 dominant types - full analysis -->
+          <div class="dominant-types" id="dominant-types"></div>
+          
+          <!-- Bottom 2 minor types - FYI -->
+          <div class="minor-types-section">
+            <h3 class="minor-types__title">סגנונות משניים</h3>
+            <div class="minor-types" id="minor-types"></div>
+          </div>
+          
+          <div class="actions results-actions">
+            <button class="ghost" id="back-to-results">חזרה לתוצאות</button>
+            <button class="primary" id="copy-results">העתק תוצאות</button>
+            <button class="ghost" id="back-to-questions-analysis">חזרה לשאלות</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
