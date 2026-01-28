@@ -4,3 +4,6 @@
 # Source questionnaire documents
 *.pdf
 *.docx
+
+# Temp upload folder (not tracked)
+_inbox/
