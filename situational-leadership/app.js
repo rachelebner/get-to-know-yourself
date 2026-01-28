@@ -122,8 +122,12 @@ function updateNavigationButtons() {
   const question = questions[currentQuestion];
   const hasAnswer = answers[question.id] !== undefined;
 
-  elements.prevBtn.disabled = currentQuestion === 0;
-  elements.prevBtn.textContent = CONTENT.ui.prev;
+  elements.prevBtn.disabled = false;
+  if (currentQuestion === 0) {
+    elements.prevBtn.textContent = CONTENT.ui.backToIntro;
+  } else {
+    elements.prevBtn.textContent = CONTENT.ui.prev;
+  }
   elements.nextBtn.disabled = !hasAnswer;
   elements.nextBtn.textContent =
     currentQuestion === questions.length - 1
@@ -326,8 +330,10 @@ function setupEventListeners() {
   });
 
   elements.prevBtn.addEventListener("click", () => {
-    if (currentQuestion > 0) {
-      currentQuestion--;
+    if (currentQuestion === 0) {
+      showScreen("intro");
+    } else {
+      currentQuestion -= 1;
       renderQuestion();
     }
   });

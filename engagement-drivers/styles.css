@@ -300,6 +300,26 @@
   color: var(--primary-dark);
 }
 
+.results-interpretation__driver {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid rgba(76, 102, 255, 0.2);
+}
+
+.results-interpretation__driver-title {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--primary-dark);
+  margin-bottom: 8px;
+}
+
+.results-interpretation__driver-description {
+  color: var(--text);
+  line-height: 1.6;
+}
+
 @media (max-width: 640px) {
   .app__logo {
     width: 44px;

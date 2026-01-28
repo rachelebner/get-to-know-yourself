@@ -314,7 +314,7 @@ function setupEventListeners() {
   // Navigation
   nextButton.addEventListener("click", () => {
     if (currentIndex < content.questions.length - 1) {
-      currentIndex++;
+      currentIndex += 1;
       updateQuestion();
       return;
     }
@@ -326,7 +326,7 @@ function setupEventListeners() {
     if (currentIndex === 0) {
       updateScreen(introScreen);
     } else {
-      currentIndex--;
+      currentIndex -= 1;
       updateQuestion();
     }
   });

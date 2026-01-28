@@ -18,6 +18,14 @@
   color: var(--primary);
 }
 
+.app__logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
 .app {
   max-width: 860px;
   margin: 0 auto;
@@ -378,6 +386,12 @@
 
 /* Mobile Responsive */
 @media (max-width: 640px) {
+  .app__logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
   .card,
   .screen {
     padding: 20px 20px 32px;

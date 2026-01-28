@@ -151,8 +151,20 @@ const getCategoryScores = () => {
 const getHighestDriver = (scores) => {
   const sorted = [...scores].sort((a, b) => b.sum - a.sum);
   const highest = sorted[0];
+  // Get top 2 drivers (or more if tied)
+  const topDrivers = [sorted[0]];
+  if (sorted[1]) {
+    // Always include second driver
+    topDrivers.push(sorted[1]);
+    // If there are ties beyond top 2, include them
+    for (let i = 2; i < sorted.length; i++) {
+      if (sorted[i].sum === sorted[1].sum) {
+        topDrivers.push(sorted[i]);
+      }
+    }
+  }
   const isTie = sorted[0].sum === sorted[1]?.sum;
-  return { highest, isTie, sorted };
+  return { highest, isTie, sorted, topDrivers };
 };
 
 const allScoresBelow12 = (scores) => {
@@ -165,22 +177,22 @@ const allScoresBelow12 = (scores) => {
 
 const showResults = () => {
   const scores = getCategoryScores();
-  const { highest, isTie, sorted } = getHighestDriver(scores);
+  const { highest, isTie, sorted, topDrivers } = getHighestDriver(scores);
   const allLow = allScoresBelow12(scores);
 
   // Clear previous results
   resultsGrid.innerHTML = "";
   resultsInterpretation.innerHTML = "";
 
-  // Display scores
+  // Display scores - highlight top 2 drivers
   scores.forEach((category) => {
-    const isHighest = category.id === highest.id;
+    const isTopDriver = topDrivers.some((d) => d.id === category.id);
     const card = document.createElement("div");
-    card.className = `result-card ${isHighest ? "result-card--highest" : ""}`;
+    card.className = `result-card ${isTopDriver ? "result-card--highest" : ""}`;
     card.innerHTML = `
       <div class="result-card__title">${category.title}</div>
       <div class="result-card__score">${category.sum}</div>
-      ${isHighest && !isTie ? '<span class="result-card__badge">מנוע המחוברות שלך</span>' : ""}
+      ${isTopDriver ? '<span class="result-card__badge">מנוע מחוברות מוביל</span>' : ""}
     `;
     resultsGrid.appendChild(card);
   });
@@ -195,21 +207,20 @@ const showResults = () => {
       <div class="results-interpretation__text">${content.results.lowScoresAction}</div>
       <div class="results-interpretation__text results-interpretation__text--highlight">${content.results.worthIt}</div>
     `;
-  } else if (isTie) {
-    const tiedCategories = sorted.filter((c) => c.sum === highest.sum).map((c) => c.title).join(", ");
-    interpretationDiv.innerHTML = `
-      <div class="results-interpretation__title">${content.results.multipleDrivers}</div>
-      <div class="results-interpretation__text">המנועים שקיבלו את הציון הגבוה: ${tiedCategories}</div>
-      <div class="results-interpretation__text">${content.results.highestDriverNote}</div>
-      <div class="results-interpretation__text">${content.results.sharedResponsibility}</div>
-      <div class="results-interpretation__text">${content.results.actionPlan}</div>
-      <div class="results-interpretation__text results-interpretation__text--highlight">${content.results.worthIt}</div>
-    `;
   } else {
+    // Show top 2 drivers (or more if tied)
+    const topDriversList = topDrivers.map((d) => `<strong>${d.title}</strong> (${d.sum})`).join(", ");
+    const topDriversDescriptions = topDrivers.map((d) => `
+      <div class="results-interpretation__driver">
+        <div class="results-interpretation__driver-title">${d.title}</div>
+        <div class="results-interpretation__driver-description">${d.description}</div>
+      </div>
+    `).join("");
+    
     interpretationDiv.innerHTML = `
-      <div class="results-interpretation__title">${content.results.highestDriver}</div>
-      <div class="results-interpretation__text results-interpretation__text--highlight">${highest.title}</div>
-      <div class="results-interpretation__text">${highest.description}</div>
+      <div class="results-interpretation__title">מנועי המחוברות המובילים שלך:</div>
+      <div class="results-interpretation__text">${topDriversList}</div>
+      ${topDriversDescriptions}
       <div class="results-interpretation__text">${content.results.highestDriverNote}</div>
       <div class="results-interpretation__text">${content.results.sharedResponsibility}</div>
       <div class="results-interpretation__text">${content.results.actionPlan}</div>
@@ -226,13 +237,15 @@ const showResults = () => {
 
 const buildResultsMarkdown = () => {
   const scores = getCategoryScores();
-  const { highest, isTie, sorted } = getHighestDriver(scores);
+  const { highest, isTie, sorted, topDrivers } = getHighestDriver(scores);
   const allLow = allScoresBelow12(scores);
 
   const lines = [`# ${content.markdown.title}`, "", `## ${content.markdown.categoryScores}`];
 
   scores.forEach((category) => {
-    lines.push(`- **${category.title}**: ${category.sum}`);
+    const isTopDriver = topDrivers.some((d) => d.id === category.id);
+    const marker = isTopDriver ? " ⭐" : "";
+    lines.push(`- **${category.title}**: ${category.sum}${marker}`);
   });
 
   lines.push("");
@@ -245,26 +258,14 @@ const buildResultsMarkdown = () => {
     lines.push(content.results.lowScoresAction);
     lines.push("");
     lines.push(content.results.worthIt);
-  } else if (isTie) {
-    const tiedCategories = sorted.filter((c) => c.sum === highest.sum).map((c) => c.title).join(", ");
-    lines.push(`## ${content.results.multipleDrivers}`);
-    lines.push("");
-    lines.push(`המנועים שקיבלו את הציון הגבוה: ${tiedCategories}`);
-    lines.push("");
-    lines.push(content.results.highestDriverNote);
-    lines.push("");
-    lines.push(content.results.sharedResponsibility);
-    lines.push("");
-    lines.push(content.results.actionPlan);
-    lines.push("");
-    lines.push(content.results.worthIt);
   } else {
-    lines.push(`## ${content.markdown.yourDriver}`);
+    lines.push(`## מנועי המחוברות המובילים שלך`);
     lines.push("");
-    lines.push(`**${highest.title}**`);
-    lines.push("");
-    lines.push(highest.description);
-    lines.push("");
+    topDrivers.forEach((driver) => {
+      lines.push(`### ${driver.title} (${driver.sum})`);
+      lines.push(driver.description);
+      lines.push("");
+    });
     lines.push(content.results.highestDriverNote);
     lines.push("");
     lines.push(content.results.sharedResponsibility);

@@ -95,6 +95,16 @@ const showResults = () => {
   const scores = getCategoryScores();
   const dominant = getDominantDrivers(scores);
   
+  // Add model context at the top
+  const contextDiv = document.createElement("div");
+  contextDiv.className = "results-context";
+  contextDiv.innerHTML = `<p>${content.results.modelContext}</p>`;
+  resultsGrid.appendChild(contextDiv);
+  
+  // Create cards container
+  const cardsContainer = document.createElement("div");
+  cardsContainer.className = "results-cards";
+  
   scores.forEach((category) => {
     const isDominant = dominant.some((d) => d.id === category.id);
     const card = document.createElement("div");
@@ -105,8 +115,10 @@ const showResults = () => {
       <div class="result-card__score">${category.sum}</div>
       <div class="result-card__range">${category.scoreRange[0]}-${category.scoreRange[1]}</div>
     `;
-    resultsGrid.appendChild(card);
+    cardsContainer.appendChild(card);
   });
+  
+  resultsGrid.appendChild(cardsContainer);
 };
 
 const getInterpretation = (score, category) => {
@@ -147,6 +159,18 @@ const showAnalysis = () => {
     `;
     analysisGrid.appendChild(card);
   });
+  
+  // Add reflection questions section
+  const reflectionSection = document.createElement("div");
+  reflectionSection.className = "reflection-section";
+  const questionsHtml = content.analysis.reflectionQuestions
+    .map((q) => `<li>${q}</li>`)
+    .join("");
+  reflectionSection.innerHTML = `
+    <h3 class="reflection-section__title">${content.analysis.reflectionTitle}</h3>
+    <ul class="reflection-section__questions">${questionsHtml}</ul>
+  `;
+  analysisGrid.appendChild(reflectionSection);
 };
 
 const buildResultsMarkdown = () => {
@@ -156,6 +180,8 @@ const buildResultsMarkdown = () => {
   
   const lines = [
     `# ${content.markdown.title}`,
+    "",
+    `> ${content.results.modelContext}`,
     "",
     `## ${content.markdown.categoryScores}`,
   ];
@@ -192,6 +218,13 @@ const buildResultsMarkdown = () => {
       lines.push(`- ${category.interpretation.low}`);
     });
   }
+  
+  // Add reflection questions
+  lines.push("");
+  lines.push(`## ${content.analysis.reflectionTitle}`);
+  content.analysis.reflectionQuestions.forEach((q) => {
+    lines.push(`- ${q}`);
+  });
   
   return lines.join("\n");
 };
