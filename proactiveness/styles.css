@@ -216,15 +216,13 @@
 }
 
 .results-actions {
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: stretch;
   align-items: center;
 }
 
 .results-actions .primary,
 .results-actions .ghost {
-  flex: 0 0 auto;
-  min-width: 120px;
+  flex: 1;
   text-align: center;
 }
 
@@ -430,15 +428,15 @@
 
   .results-actions {
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-wrap: nowrap;
+    gap: 8px;
   }
 
   .results-actions .primary,
   .results-actions .ghost {
-    min-width: 100px;
-    padding: 10px 16px;
-    font-size: 14px;
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 13px;
   }
 
   .question__pair {
