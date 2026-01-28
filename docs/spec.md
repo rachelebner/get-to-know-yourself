@@ -124,6 +124,7 @@ Example: `proactiveness/README.md`
 | Name | Folder | Status |
 |------|--------|--------|
 | מנוף הפרואקטיביות | `/proactiveness` | ✅ Complete |
+| שאלון ניהול מצבי | `/situational-leadership` | 🚧 In Progress |
 
 ---
 
