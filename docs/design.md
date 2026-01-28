@@ -242,13 +242,16 @@ Two variants: primary (filled) and ghost (outlined). Defined in shared styles.
   border: none;
   font-size: 16px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 .primary {
   background: var(--primary);
   color: white;
-  box-shadow: var(--shadow-primary);
+}
+
+.primary:hover {
+  background: var(--primary-dark);
 }
 
 .ghost {

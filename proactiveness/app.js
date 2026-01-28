@@ -1,165 +1,4 @@
-const questions = [
-  {
-    id: 1,
-    right: "הצלחה בחיים היא בעיקר עניין של מזל והזדמנות שנקרתה בדרכי.",
-    left: "הצלחה היא תוצאה ישירה של המאמץ והבחירות שאני עושה.",
-  },
-  {
-    id: 2,
-    right:
-      "כשיש כישלון, אני בוחן קודם אילו סיבות חיצוניות מנעו את ההצלחה.",
-    left: "כשיש כישלון, אני מחפש קודם מה אני יכולתי לעשות אחרת.",
-  },
-  {
-    id: 3,
-    right: "אני מאמין שיש לי יכולת מוגבלת לשנות את התרבות הארגונית סביבי.",
-    left: "אני מאמין שההתנהגות הערכית שלי יכולה לעצב מחדש את הסביבה שלי.",
-  },
-  {
-    id: 4,
-    right: "אני מעדיף להשקיע את האנרגיה בפתרון מצוין של בעיות ההווה.",
-    left: "אני מקדיש זמן קבוע לחשיבה על הצרכים והאתגרים של השנה הבאה.",
-  },
-  {
-    id: 5,
-    right: "תכנון מפורט מדי הוא בזבוז זמן כי המציאות ממילא משתנה.",
-    left: "תכנון מוקדם הוא הדרך היחידה למנוע משברים עתידיים.",
-  },
-  {
-    id: 6,
-    right: "אני פועל הכי טוב בשטח-זמן קרוב שמכתיב לי את סדר העדיפויות.",
-    left: "אני יוצר לעצמי משימות לטווח רחוק גם כשאין עליהן לחץ מיידי.",
-  },
-  {
-    id: 7,
-    right: "חשוב לי לא לעשות טעויות שיפגעו במוניטין או בתפקוד שלי.",
-    left: "אני מוכן לטעות ולהיכשל כדי ללמוד ולנסות גישות חדשות.",
-  },
-  {
-    id: 8,
-    right: "אני זקוק לכל הנתונים והאישורים לפני שאני יוצא לדרך חדשה.",
-    left: "אני מרגיש בנוח להתחיל לפעול גם כשהתמונה עדיין חלקית.",
-  },
-  {
-    id: 9,
-    right: "אני מעדיף שיטות עבודה מוכחות שעבדו היטב בעבר.",
-    left: "אני נהנה לאתגר את הקיים ולנסות דרכים שטרם נוסו.",
-  },
-  {
-    id: 10,
-    right: "אני מעדיף לבצע משימות שבהן הכישורים שלי באים לידי ביטוי מובהק.",
-    left: "אני בטוח ביכולתי להשתלט על תחומים חדשים לחלוטין.",
-  },
-  {
-    id: 11,
-    right: "במצבים מורכבים, אני מחפש הנחיה או מנהיגות של מישהו מנוסה.",
-    left: "במצבים מורכבים, אני סומך על האינטואיציה והיכולת שלי להוביל.",
-  },
-  {
-    id: 12,
-    right: "קשה לי להאמין שהצלחה בודדת שלי תשנה מהלך אסטרטגי גדול.",
-    left: "אני מאמין שיש לי את הכוח להניע שינויים משמעותיים בארגון.",
-  },
-  {
-    id: 13,
-    right: "אני ממוקד מאוד בביצוע איכותי של הגדרות התפקיד הנוכחיות שלי.",
-    left: "אני כל הזמן סורק את הסביבה כדי למצוא הזדמנויות לשיפור.",
-  },
-  {
-    id: 14,
-    right: "אני מעדיף שאחרים יגדירו עבורי מהן הבעיות שדורשות פתרון.",
-    left: "אני מזהה פערים וצרכים עוד לפני שהם עולים לדיון רשמי.",
-  },
-  {
-    id: 15,
-    right: "אני מתרכז בתחום המקצועי שלי ופחות במה שקורה במחלקות אחרות.",
-    left: "אני מחפש באופן פעיל הקשרים וחיבורים בין תחומים שונים.",
-  },
-  {
-    id: 16,
-    right: "כשיש בעיה, חשוב לי קודם כל להבין לעומק למה היא קרתה.",
-    left: "כשיש בעיה, הדחף הראשון שלי הוא לעשות משהו כדי לקדם פתרון.",
-  },
-  {
-    id: 17,
-    right: "אני נוטה להשקיע זמן רב בדיונים ושיח על הקשיים שבדרך.",
-    left: "אני נוטה לחפש את \"הצעד הבא\" הקטן ביותר שאפשר לבצע מיד.",
-  },
-  {
-    id: 18,
-    right: "אני מעדיף להמתין עד שהפתרון האידיאלי יתגבש בראשי.",
-    left: "אני מעדיף להתחיל עם פתרון חלקי ולשפר אותו תוך כדי תנועה.",
-  },
-];
-
-const categories = [
-  {
-    id: "control",
-    title: "מיקוד שליטה",
-    range: [1, 3],
-    analysis: {
-      reactive:
-        "מיקוד חיצוני: את/ה נוטה להרגיש שהנסיבות, המזל או החלטות של אחרים מעצבים את התוצאות שלך. זה עשוי להפחית יוזמה ולהגביר תחושת חוסר שליטה.",
-      proactive:
-        "מיקוד פנימי: את/ה מאמין/ה שההחלטות והפעולות שלך משפיעות ישירות על המציאות. גם כשקשה, את/ה שואל/ת \"מה האחריות שלי בזה?\" ומניע/ה שינוי.",
-    },
-  },
-  {
-    id: "future",
-    title: "אוריינטציית עתיד",
-    range: [4, 6],
-    analysis: {
-      reactive:
-        "מיקוד בהווה: את/ה ממוקד/ת במשימות הקרובות ונמנע/ת מהסתכלות ארוכת טווח. זה עוזר להתכנס לביצוע, אך עלול לצמצם יוזמה קדימה.",
-      proactive:
-        "חשיבה עתידית: את/ה יוזם/ת תכנון קדימה ומניע/ה פעולות בהווה כדי לממש מטרות עתידיות. ההסתכלות הרחבה מחזקת בחירה מודעת.",
-    },
-  },
-  {
-    id: "risk",
-    title: "נכונות לסיכון",
-    range: [7, 9],
-    analysis: {
-      reactive:
-        "שאיפה לביטחון: את/ה מעדיף/ה להסתמך על שיטות מוכחות ולמזער טעויות. המחיר עלול להיות איטיות בחדשנות.",
-      proactive:
-        "תעוזה מחושבת: את/ה מוכן/ה לפעול גם בתנאי אי־ודאות ולהתנסות. הנכונות לקחת סיכונים מאפשרת פריצות דרך.",
-    },
-  },
-  {
-    id: "efficacy",
-    title: "תחושת מסוגלות",
-    range: [10, 12],
-    analysis: {
-      reactive:
-        "הסתמכות על הקיים: את/ה נוטה לפעול בגבולות המוכר והבטוח. זה תורם לביצוע יציב, אבל יכול לצמצם צמיחה.",
-      proactive:
-        "אמונה ביכולת השפעה: את/ה מאמין/ה ביכולתך ללמוד מהר ולהוביל שינוי. הגישה הזו מאפשרת ליזום מהלכים גדולים יותר.",
-    },
-  },
-  {
-    id: "environment",
-    title: "הקשבה סביבתית",
-    range: [13, 15],
-    analysis: {
-      reactive:
-        "מיקוד ביצוע: את/ה מתרכז/ת במשימות הישירות ופחות בקשרים רוחביים. לפעמים זה מפספס הזדמנויות חיבור.",
-      proactive:
-        "סריקה פעילה: את/ה שם/ה לב למגמות, קשרים ופערים בין תחומים. זה מאפשר לזהות הזדמנויות לפני אחרים.",
-    },
-  },
-  {
-    id: "action",
-    title: "הנעה לפעולה",
-    range: [16, 18],
-    analysis: {
-      reactive:
-        "ניתוח לפני תנועה: את/ה נוטה לעכב פעולה עד להבנה מלאה. זה מספק עומק, אך יכול להאט התקדמות.",
-      proactive:
-        "דחיפה לביצוע: את/ה נוטה להתחיל צעד קטן ומהיר כדי להתקדם, גם אם הפתרון עדיין לא מושלם.",
-    },
-  },
-];
+let content = null;
 
 const introScreen = document.getElementById("intro");
 const questionScreen = document.getElementById("question-screen");
@@ -195,7 +34,7 @@ const backToQuestionsInsightsButton = document.getElementById(
 const scoreInputs = Array.from(document.querySelectorAll("input[name='score']"));
 
 let currentIndex = 0;
-const answers = new Array(questions.length).fill(null);
+let answers = [];
 
 const updateScreen = (screen) => {
   [
@@ -210,19 +49,24 @@ const updateScreen = (screen) => {
 };
 
 const updateQuestion = () => {
-  const question = questions[currentIndex];
+  const question = content.questions[currentIndex];
   statementRight.textContent = question.right;
   statementLeft.textContent = question.left;
-  progressText.textContent = `שאלה ${question.id} מתוך ${questions.length}`;
-  const progress = ((currentIndex + 1) / questions.length) * 100;
+  progressText.textContent = content.ui.questionOf
+    .replace("{current}", question.id)
+    .replace("{total}", content.questions.length);
+  const progress = ((currentIndex + 1) / content.questions.length) * 100;
   progressFill.style.width = `${progress}%`;
   prevButton.disabled = false;
   if (currentIndex === 0) {
-    prevButton.textContent = "חזרה להנחיות";
+    prevButton.textContent = content.ui.backToIntro;
   } else {
-    prevButton.textContent = "חזרה";
+    prevButton.textContent = content.ui.prev;
   }
-  nextButton.textContent = currentIndex === questions.length - 1 ? "סיום" : "הבא";
+  nextButton.textContent =
+    currentIndex === content.questions.length - 1
+      ? content.ui.finish
+      : content.ui.next;
   scoreInputs.forEach((input) => {
     input.checked = Number(input.value) === answers[currentIndex];
   });
@@ -241,7 +85,7 @@ const fillRandomAnswers = () => {
 };
 
 const getCategoryScores = () =>
-  categories.map((category) => {
+  content.categories.map((category) => {
     const [start, end] = category.range;
     const scores = answers.slice(start - 1, end);
     return {
@@ -265,12 +109,12 @@ const showResults = () => {
 
 const getAnalysisLabel = (score) => {
   if (score <= 6) {
-    return { label: "ציון תגובתי (3-6)", tone: "reactive" };
+    return { label: content.analysisLabels.reactive, tone: "reactive" };
   }
   if (score >= 11) {
-    return { label: "ציון פרואקטיבי (11-15)", tone: "proactive" };
+    return { label: content.analysisLabels.proactive, tone: "proactive" };
   }
-  return { label: "ציון מעורב (7-10)", tone: "mixed" };
+  return { label: content.analysisLabels.mixed, tone: "mixed" };
 };
 
 const showAnalysis = () => {
@@ -279,19 +123,19 @@ const showAnalysis = () => {
 
   const reactiveCount = scores.filter((category) => category.sum <= 6).length;
   const proactiveCount = scores.filter((category) => category.sum >= 11).length;
-  const mixedCount = scores.length - reactiveCount - proactiveCount;
   const reactiveRate = Math.round((reactiveCount / scores.length) * 100);
 
   analysisSummary.innerHTML = `
     <div class="analysis-summary__item">
-      הפרמטרים הבולטים שקיבלו ציון קיצוני: ${reactiveCount} תגובתיים, ${proactiveCount}
-      פרואקטיביים.
+      ${content.analysisSummary.extremeParams
+        .replace("{reactive}", reactiveCount)
+        .replace("{proactive}", proactiveCount)}
     </div>
     <div class="analysis-summary__item">
-      ציוני הביניים מצביעים על דפוס התנהלות תלוי סיטואציה בפרמטר הרלוונטי.
+      ${content.analysisSummary.middleScores}
     </div>
     <div class="analysis-summary__item">
-      מדד תגובתיות: ${reactiveRate}% מהפרמטרים נמצאים בטווח 3-6.
+      ${content.analysisSummary.reactiveRate.replace("{rate}", reactiveRate)}
     </div>
   `;
 
@@ -311,57 +155,12 @@ const showAnalysis = () => {
             ? category.analysis.reactive
             : tone === "proactive"
               ? category.analysis.proactive
-              : "הציון מצביע על שילוב בין תגובתיות לפרואקטיביות. מומלץ לבדוק אילו מצבים מוציאים ממך יוזמה גבוהה יותר, ולחזק אותם."
+              : content.analysisLabels.mixedAnalysis
         }
       </p>
     `;
     analysisGrid.appendChild(card);
   });
-};
-
-const insightsContent = {
-  control: {
-    title: "חיזוק מיקוד השליטה (מעבר מ״מקורבן״ ל״משפיע״)",
-    insight:
-      "אם הציון שלך נמוך, ייתכן שאת/ה מרגיש/ה שהנסיבות גדולות ממך.",
-    action:
-      "בכל פעם שאת/ה נתקע/ת, שאל/י את עצמך מה הדבר האחד שנמצא בשליטה שלך, והעבר/י אותו מ״מעגל ההשפעה״ ל״מעגל הדאגה״.",
-  },
-  future: {
-    title: "פיתוח אוריינטציית עתיד (מעבר מ״כיבוי שריפות״ ל״תכנון״)",
-    insight:
-      "ציון נמוך מעיד על עבודה במצב תגובתי וניהול משברים בלתי פוסק.",
-    action:
-      "הקדש/י 15 דקות בבוקר או שעה בסוף שבוע לסימון ״בעיית עתיד״ אחת ולנסח פעולה קטנה שתקדם אותה בשבוע הקרוב.",
-  },
-  risk: {
-    title: "העפת סיכונים מחושבים (מעבר מ״קיפאון״ ל״ניסוי״)",
-    insight:
-      "ציון נמוך נובע לרוב מחשש מטעויות או מרצון בביטחון מוחלט.",
-    action:
-      "במקום להחליט על פרויקט ענק ומפחיד, בצע/י ״ניסויים קטנים״ (Safe-to-fail) שמאפשרים ללמוד בלי סיכון אישי.",
-  },
-  efficacy: {
-    title: "העלאת תחושת מסוגלות (מעבר מ״היסוס״ ל״אמונה״)",
-    insight:
-      "אם הציון נמוך, ייתכן שאת/ה ממעיט/ה בערך היכולת שלך להניע שינוי.",
-    action:
-      "תעד/י מקרים שבהם פתרת בעיה או למדת משהו חדש. בנוסף, מצא/י ״מודל לחיקוי״ – אדם שדומה לך והצליח, ולמד/י מה הצעד הראשון שהוא עשה.",
-  },
-  environment: {
-    title: "הרחבת הקשבה סביבתית (מעבר מ״מיקוד צר״ ל״ראיית הקשר״)",
-    insight:
-      "ציון נמוך מצביע על כך שאת/ה ממוקד/ת מאוד במשימה שלך ומפספס/ת הזדמנויות מסביב.",
-    action:
-      "פעם בשבוע קבע/י ״קפה״ עם קולגה ממחלקה אחרת, והקשב/י לאתגרים של לקוחות או של צוותים אחרים. שאל/י את עצמך: מה חסר כאן שאיש עדיין לא שם לב?",
-  },
-  action: {
-    title: "מעבר ממיקוד בבעיה לפעולה (מעבר מ״ניתוח״ ל״יישום״)",
-    insight:
-      "ציון נמוך מעיד על נטייה להיתקע בשלב הסבירות או בניתוח המעמיק (Analysis Paralysis).",
-    action:
-      "מצא/י את ״חוק 5 הדקות״: ברגע שעולה בעיה, הקצב/י 5 דקות לפעולה הראשונה. אל תחפשי/י את הפתרון המושלם – חפש/י את ה‑MVP (Minimum Viable Product) – הפעולה הקטנה ביותר שתתחיל תנועה.",
-  },
 };
 
 const getSummaryBlock = (scores) => {
@@ -371,27 +170,21 @@ const getSummaryBlock = (scores) => {
 
   if (proactiveCount > reactiveCount && proactiveCount > mixedCount) {
     return {
-      title: "סיכום אישי",
-      items: [
-        "את/ה אדם פרואקטיבי מאוד. האתגר שלך עשוי להיות סבלנות כלפי אחרים או עבודה בצוותים פחות יזמיים.",
-      ],
+      title: content.summaryBlocks.proactive.title,
+      items: [content.summaryBlocks.proactive.message],
     };
   }
 
   if (reactiveCount > proactiveCount && reactiveCount > mixedCount) {
     return {
-      title: "סיכום אישי",
-      items: [
-        "הסגנון שלך מגיב ומחושב. כדי להגביר פרואקטיביות, נסה/י לבחור ״מנוף״ אחד (למשל: מעבר מבעיה לפעולה) ולהתאמן עליו בשבוע הקרוב.",
-      ],
+      title: content.summaryBlocks.reactive.title,
+      items: [content.summaryBlocks.reactive.message],
     };
   }
 
   return {
-    title: "סיכום אישי",
-    items: [
-      "יש לך אזורים שבהם את/ה יוזמ/ת ואחרים שבהם את/ה נמנע/ת. הבנה של ״למה״ (למשל: ״אני מאמין בעצמי אבל מפחד מסיכון״) היא המפתח לצמיחה שלך.",
-    ],
+    title: content.summaryBlocks.mixed.title,
+    items: [content.summaryBlocks.mixed.message],
   };
 };
 
@@ -403,22 +196,25 @@ const showInsights = () => {
   if (relevantScores.length === 0) {
     insightsGrid.innerHTML = `
       <div class="insights__block">
-        <h3>נפלא! כל הציונים שלך גבוהים</h3>
-        <p>המשיכ/י לשמר את ההרגלים הפרואקטיביים ולחזק אותם לאורך זמן.</p>
+        <h3>${content.insightsAllHigh.title}</h3>
+        <p>${content.insightsAllHigh.message}</p>
       </div>
     `;
   } else {
     relevantScores.forEach((category) => {
-      const { title, insight, action } = insightsContent[category.id];
-      const label = category.sum <= 6 ? "תגובתי" : "מעורב";
+      const insightData = content.insights[category.id];
+      const label =
+        category.sum <= 6
+          ? content.insightsLabels.reactive
+          : content.insightsLabels.mixed;
       const block = document.createElement("div");
       block.className = "insights__block";
       block.innerHTML = `
-        <h3>${title}</h3>
-        <div class="insights__score">ציון: ${category.sum} (${label})</div>
+        <h3>${insightData.title}</h3>
+        <div class="insights__score">${content.markdown.scoreLabel}: ${category.sum} (${label})</div>
         <ul>
-          <li><strong>התובנה:</strong> ${insight}</li>
-          <li><strong>מה כדאי לעשות:</strong> ${action}</li>
+          <li><strong>${content.markdown.insightLabel}:</strong> ${insightData.insight}</li>
+          <li><strong>${content.markdown.actionLabel}:</strong> ${insightData.action}</li>
         </ul>
       `;
       insightsGrid.appendChild(block);
@@ -445,13 +241,16 @@ const buildResultsMarkdown = () => {
   const insightLines = scores
     .filter((category) => category.sum <= 10)
     .map((category) => {
-      const { title, insight, action } = insightsContent[category.id];
-      const label = category.sum <= 6 ? "תגובתי" : "מעורב";
+      const insightData = content.insights[category.id];
+      const label =
+        category.sum <= 6
+          ? content.insightsLabels.reactive
+          : content.insightsLabels.mixed;
       return [
-        `### ${title}`,
-        `- ציון: ${category.sum} (${label})`,
-        `- תובנה: ${insight}`,
-        `- מה כדאי לעשות: ${action}`,
+        `### ${insightData.title}`,
+        `- ${content.markdown.scoreLabel}: ${category.sum} (${label})`,
+        `- ${content.markdown.insightLabel}: ${insightData.insight}`,
+        `- ${content.markdown.actionLabel}: ${insightData.action}`,
       ].join("\n");
     });
 
@@ -459,18 +258,18 @@ const buildResultsMarkdown = () => {
   const insightsSection =
     insightLines.length > 0
       ? insightLines.join("\n\n")
-      : "כל הציונים גבוהים – המשך לשמר את ההרגלים הפרואקטיביים.";
+      : content.markdown.allHighMessage;
 
   return [
-    "# תוצאות אבחון עצמי",
+    `# ${content.markdown.title}`,
     "",
-    "## ציונים לפי קטגוריה",
+    `## ${content.markdown.categoryScores}`,
     ...analysisLines,
     "",
-    "## תובנות אישיות",
+    `## ${content.markdown.personalInsights}`,
     insightsSection,
     "",
-    "## סיכום אישי",
+    `## ${content.markdown.personalSummary}`,
     summaryBlock,
   ].join("\n");
 };
@@ -496,86 +295,93 @@ const copyResultsToClipboard = async () => {
   document.body.removeChild(textarea);
 };
 
-scoreInputs.forEach((input) => {
-  input.addEventListener("change", (event) => {
-    setAnswer(Number(event.target.value));
-  });
-});
+const initApp = async () => {
+  content = await fetch("./content.json").then((r) => r.json());
+  answers = new Array(content.questions.length).fill(null);
 
-nextButton.addEventListener("click", () => {
-  if (currentIndex < questions.length - 1) {
-    currentIndex += 1;
-    updateQuestion();
-    return;
-  }
-  showResults();
-  updateScreen(resultsScreen);
-});
-
-prevButton.addEventListener("click", () => {
-  if (currentIndex === 0) {
-    updateScreen(introScreen);
-  } else {
-    currentIndex -= 1;
-    updateQuestion();
-  }
-});
-
-startButton.addEventListener("click", () => {
-  currentIndex = 0;
-  updateQuestion();
-  updateScreen(questionScreen);
-});
-
-fillRandomButton.addEventListener("click", () => {
-  fillRandomAnswers();
-  showResults();
-  updateScreen(resultsScreen);
-});
-
-restartButton.addEventListener("click", () => {
-  answers.fill(null);
   scoreInputs.forEach((input) => {
-    input.checked = false;
+    input.addEventListener("change", (event) => {
+      setAnswer(Number(event.target.value));
+    });
   });
-  updateScreen(introScreen);
-});
 
-backToQuestionsButton.addEventListener("click", () => {
-  updateQuestion();
-  updateScreen(questionScreen);
-});
+  nextButton.addEventListener("click", () => {
+    if (currentIndex < content.questions.length - 1) {
+      currentIndex += 1;
+      updateQuestion();
+      return;
+    }
+    showResults();
+    updateScreen(resultsScreen);
+  });
 
-toAnalysisButton.addEventListener("click", () => {
-  showAnalysis();
-  updateScreen(analysisScreen);
-});
+  prevButton.addEventListener("click", () => {
+    if (currentIndex === 0) {
+      updateScreen(introScreen);
+    } else {
+      currentIndex -= 1;
+      updateQuestion();
+    }
+  });
 
-toInsightsButton.addEventListener("click", () => {
-  showInsights();
-  updateScreen(insightsScreen);
-});
+  startButton.addEventListener("click", () => {
+    currentIndex = 0;
+    updateQuestion();
+    updateScreen(questionScreen);
+  });
 
-copyResultsButton.addEventListener("click", () => {
-  copyResultsToClipboard();
-});
+  fillRandomButton.addEventListener("click", () => {
+    fillRandomAnswers();
+    showResults();
+    updateScreen(resultsScreen);
+  });
 
-backToResultsButton.addEventListener("click", () => {
-  showResults();
-  updateScreen(resultsScreen);
-});
+  restartButton.addEventListener("click", () => {
+    answers.fill(null);
+    scoreInputs.forEach((input) => {
+      input.checked = false;
+    });
+    updateScreen(introScreen);
+  });
 
-backToQuestionsAnalysisButton.addEventListener("click", () => {
-  updateQuestion();
-  updateScreen(questionScreen);
-});
+  backToQuestionsButton.addEventListener("click", () => {
+    updateQuestion();
+    updateScreen(questionScreen);
+  });
 
-backToAnalysisButton.addEventListener("click", () => {
-  showAnalysis();
-  updateScreen(analysisScreen);
-});
+  toAnalysisButton.addEventListener("click", () => {
+    showAnalysis();
+    updateScreen(analysisScreen);
+  });
 
-backToQuestionsInsightsButton.addEventListener("click", () => {
-  updateQuestion();
-  updateScreen(questionScreen);
-});
+  toInsightsButton.addEventListener("click", () => {
+    showInsights();
+    updateScreen(insightsScreen);
+  });
+
+  copyResultsButton.addEventListener("click", () => {
+    copyResultsToClipboard();
+  });
+
+  backToResultsButton.addEventListener("click", () => {
+    showResults();
+    updateScreen(resultsScreen);
+  });
+
+  backToQuestionsAnalysisButton.addEventListener("click", () => {
+    updateQuestion();
+    updateScreen(questionScreen);
+  });
+
+  backToAnalysisButton.addEventListener("click", () => {
+    showAnalysis();
+    updateScreen(analysisScreen);
+  });
+
+  backToQuestionsInsightsButton.addEventListener("click", () => {
+    updateQuestion();
+    updateScreen(questionScreen);
+  });
+};
+
+initApp();

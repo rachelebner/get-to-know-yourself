@@ -18,6 +18,14 @@
   color: var(--primary);
 }
 
+.app__logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
 .app {
   max-width: 860px;
   margin: 0 auto;
@@ -224,11 +232,14 @@
 }
 
 .results-actions {
+  justify-content: stretch;
   align-items: center;
 }
 
-.results-actions .primary {
-  flex-shrink: 0;
+.results-actions .primary,
+.results-actions .ghost {
+  flex: 1;
+  text-align: center;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -449,6 +460,12 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 640px) {
+  .app__logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
   .card,
   .screen {
     padding: 20px 20px 32px;
@@ -513,6 +530,19 @@
   .actions {
     flex-direction: column;
     gap: 12px;
+  }
+
+  .results-actions {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .results-actions .primary,
+  .results-actions .ghost {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 13px;
   }
 
   .minor-types {

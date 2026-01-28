@@ -4,15 +4,30 @@ This documents the specific structure and patterns used in this questionnaire. O
 
 ---
 
+## File Structure
+
+```
+proactiveness/
+├── index.html      # HTML structure
+├── styles.css      # Styles (imports ../shared.css)
+├── app.js          # Logic only - no Hebrew strings
+├── content.json    # All Hebrew text (questions, insights, descriptions)
+└── README.md       # This file
+```
+
+**Content separation:** All Hebrew text is stored in `content.json`, keeping `app.js` focused on logic only. See `docs/design.md` for the rationale.
+
+---
+
 ## Question Format: Bipolar Scale
 
 Each question presents two opposing statements (right vs left). User selects 1-5 indicating which statement they identify with more.
 
-```javascript
+```json
 {
-  id: 1,
-  right: "Statement A (reactive pole)",  // Score 1 = full identification
-  left: "Statement B (proactive pole)",  // Score 5 = full identification
+  "id": 1,
+  "right": "Statement A (reactive pole)",
+  "left": "Statement B (proactive pole)"
 }
 ```
 
@@ -24,14 +39,19 @@ Each question presents two opposing statements (right vs left). User selects 1-5
 
 Questions are grouped into 6 categories. Each category covers a range of question IDs, and scores are summed.
 
-```javascript
+```json
 {
-  id: "control",
-  title: "מיקוד שליטה",
-  range: [1, 3],  // Questions 1, 2, 3
-  // Sum of 3 questions → score range: 3-15
+  "id": "control",
+  "title": "מיקוד שליטה",
+  "range": [1, 3],
+  "analysis": {
+    "reactive": "Text explaining low score behavior...",
+    "proactive": "Text explaining high score behavior..."
+  }
 }
 ```
+
+Sum of 3 questions → score range: 3-15
 
 **Categories:**
 | ID | Title | Questions | Score Range |
@@ -55,14 +75,7 @@ Scores are interpreted based on thresholds:
 | 7-10 | מעורב (mixed) | mixed |
 | 11-15 | פרואקטיבי (proactive) | proactive |
 
-Each category has pre-written analysis text for reactive and proactive tones. Mixed scores get a generic message.
-
-```javascript
-analysis: {
-  reactive: "Text explaining low score behavior...",
-  proactive: "Text explaining high score behavior...",
-}
-```
+Each category has pre-written analysis text for reactive and proactive tones. Mixed scores get a generic message stored in `content.json` under `analysisLabels.mixedAnalysis`.
 
 ---
 
@@ -78,13 +91,15 @@ analysis: {
 
 ## Insights Structure
 
-Only shown for categories where score ≤10 (room for improvement).
+Only shown for categories where score ≤10 (room for improvement). Stored in `content.json` under `insights`.
 
-```javascript
+```json
 {
-  title: "Section title",
-  insight: "What this score pattern means",
-  action: "Specific recommendation to improve",
+  "control": {
+    "title": "Section title",
+    "insight": "What this score pattern means",
+    "action": "Specific recommendation to improve"
+  }
 }
 ```
 
