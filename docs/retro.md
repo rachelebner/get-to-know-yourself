@@ -119,3 +119,22 @@ Start learnning about cursor commands/skills, in addition to rules.
 - Content separation pattern should be documented in design.md ✓ (done)
 - "Back to intro on Q1" could become a standard pattern for all questionnaires
 
+---
+
+## Session: 2026-01-28 - Polish & Content Extraction
+
+### What We Did
+- Extracted Hebrew content to JSON in proactiveness questionnaire (content separation)
+- Fixed results-actions button layout (flex: 1 for even distribution)
+- Added logo.avif to hub page (100px) and questionnaire headers (56px)
+- Simplified primary button style: removed shadow and hover movement
+
+### Decisions Made
+- **Button style simplification** - No shadow, no movement; just color darken on hover
+- **Logo sizing** - Larger on hub (brand presence), smaller on questionnaires (subtle)
+- **Button layout** - Use `flex: 1` for equal-width buttons in action rows
+
+### Workflow Observations
+- Screenshot feedback from user was essential for visual bug fixes
+- Quick iteration cycle worked well for style refinements
+
