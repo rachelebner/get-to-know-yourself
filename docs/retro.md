@@ -90,3 +90,32 @@ git push --recurse-submodules=on-demand
 If you see `(modified content)` next to the submodule in `git status`, it means the submodule has uncommitted changes. Commit those first before committing the parent.
 
 
+
+Start learnning about cursor commands/skills, in addition to rules.
+
+---
+
+## Session: 2026-01-28 - Communication Styles Questionnaire
+
+### What We Did
+- Built second questionnaire: סגנונות תקשורת (Communication Styles)
+- 40 yes/no questions → 4 personality types (supportive, analytical, expressive, driver)
+- Implemented content separation pattern (Hebrew text in content.json)
+- Bar chart visualization for results
+- Ranked analysis: top 2 dominant types (full details) + bottom 2 as FYI
+- Added "חזרה להנחיות" button on question 1 (both questionnaires)
+
+### Decisions Made
+- **Content separation** - All Hebrew text in JSON, JS has logic only
+- **Analysis hierarchy** - Show top 2 types in detail, bottom 2 minimized
+- **Question 1 UX** - "Back to instructions" instead of disabled button
+
+### Workflow Observations
+- Barry (Solo Dev persona) worked well for fast execution
+- Content separation adds ~1 file but makes future edits much cleaner
+- Having proactiveness as reference made building second questionnaire faster
+
+### Rule Candidates
+- Content separation pattern should be documented in design.md ✓ (done)
+- "Back to intro on Q1" could become a standard pattern for all questionnaires
+
