@@ -1,0 +1,281 @@
+{
+  "meta": {
+    "title": "שאלון אבחון עצמי - שלושת מעגלי המנהיגות והניהול",
+    "description": "אבחון עצמי של שלושת מעגלי המנהיגות והניהול"
+  },
+  "intro": {
+    "title": "שאלון אבחון עצמי - שלושת מעגלי המנהיגות והניהול",
+    "instructions": "השאלון מנוסח בלשון זכר ומיועד לכולן ולכולם! מטרת השאלון היא לעזור לך להבין את נקודות החוזק שלך ואת התחומים שבהם ניתן להשתפר בכל אחד משלושת מעגלי המנהיגות. עבור כל היגד, דרג את עצמך בסולם של 1 עד 3:",
+    "scaleLabels": {
+      "1": "קיים במידה מועטה או לא קיים כלל",
+      "2": "קיים לעיתים, אך דורש חיזוק",
+      "3": "קיים באופן משמעותי ומהווה חוזקה שלי"
+    }
+  },
+  "ui": {
+    "start": "התחל",
+    "next": "הבא",
+    "prev": "חזרה",
+    "backToIntro": "חזרה להנחיות",
+    "finish": "סיום",
+    "toResults": "לתוצאות",
+    "toDetails": "לפירוט לפי תת-קטגוריות",
+    "copyResults": "העתק תוצאות",
+    "restart": "התחל מחדש",
+    "backToHub": "חזרה למרכז השאלונים",
+    "backToQuestions": "חזרה לשאלות",
+    "backToResults": "חזרה לתוצאות",
+    "questionOf": "שאלה {current} מתוך {total}",
+    "fillRandom": "מילוי אקראי (בדיקה)"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "text": "אני מכיר היטב את החוזקות שלי ומשתמש בהן בעבודתי היומיומית",
+      "circle": 1,
+      "subCategory": "self-awareness"
+    },
+    {
+      "id": 2,
+      "text": "אני מבין מהם האתגרים האישיים שלי וכיצד הם משפיעים על העבודה שלי",
+      "circle": 1,
+      "subCategory": "self-awareness"
+    },
+    {
+      "id": 3,
+      "text": "אני יודע כיצד לנצל את החוזקות שלי כדי להתגבר על קשיים",
+      "circle": 1,
+      "subCategory": "self-awareness"
+    },
+    {
+      "id": 4,
+      "text": "אני מצליח לנהל את זמני כך שאעמוד במשימותיי בלי להרגיש מוצף",
+      "circle": 1,
+      "subCategory": "personal-management"
+    },
+    {
+      "id": 5,
+      "text": "אני מקבל החלטות במהירות ובביטחון גם כאשר יש חוסר ודאות",
+      "circle": 1,
+      "subCategory": "personal-management"
+    },
+    {
+      "id": 6,
+      "text": "אני מזהה סימני שחיקה מוקדם ופועל כדי למנוע אותה",
+      "circle": 1,
+      "subCategory": "personal-management"
+    },
+    {
+      "id": 7,
+      "text": "אני שומר על גישה פרואקטיבית גם כאשר יש אתגרים חיצוניים",
+      "circle": 1,
+      "subCategory": "personal-resilience"
+    },
+    {
+      "id": 8,
+      "text": "אני מוצא דרכים לשמור על המוטיבציה שלי גם בתקופות עמוסות",
+      "circle": 1,
+      "subCategory": "personal-resilience"
+    },
+    {
+      "id": 9,
+      "text": "אני שומר על איזון בין עבודה לחיים האישיים שלי",
+      "circle": 1,
+      "subCategory": "personal-resilience"
+    },
+    {
+      "id": 10,
+      "text": "אני יוצר אמון בצוות שלי באמצעות שקיפות ותקשורת ברורה",
+      "circle": 2,
+      "subCategory": "team-management"
+    },
+    {
+      "id": 11,
+      "text": "אני מזהה מה מניע כל אחד מחברי הצוות שלי ופועל בהתאם",
+      "circle": 2,
+      "subCategory": "team-management"
+    },
+    {
+      "id": 12,
+      "text": "אני מקדם עבודת צוות ושיתוף פעולה במקום תחרות לא בריאה",
+      "circle": 2,
+      "subCategory": "team-management"
+    },
+    {
+      "id": 13,
+      "text": "אני מתאים את סגנון ההובלה שלי לכל עובד בהתאם לחוזקות ולצרכים האישיים שלו",
+      "circle": 2,
+      "subCategory": "relationship-building"
+    },
+    {
+      "id": 14,
+      "text": "אני מקדיש זמן להיכרות אישית עם העובדים כדי להבין כיצד לעבוד איתם בצורה מיטבית",
+      "circle": 2,
+      "subCategory": "relationship-building"
+    },
+    {
+      "id": 15,
+      "text": "אני מזהה קונפליקטים בתוך הצוות ופועל לפתור אותם בצורה אפקטיבית",
+      "circle": 2,
+      "subCategory": "relationship-building"
+    },
+    {
+      "id": 16,
+      "text": "אני נותן פידבק בצורה בונה ועקבית שמקדמת את הצוות",
+      "circle": 2,
+      "subCategory": "feedback-conversations"
+    },
+    {
+      "id": 17,
+      "text": "אני מקיים שיחות משמעותיות עם הצוות שלי כדי להבין את האתגרים שלהם",
+      "circle": 2,
+      "subCategory": "feedback-conversations"
+    },
+    {
+      "id": 18,
+      "text": "אני יודע לנהל שיחות קשות מבלי לפגוע במערכת היחסים עם העובדים",
+      "circle": 2,
+      "subCategory": "feedback-conversations"
+    },
+    {
+      "id": 19,
+      "text": "אני פועל לייצר השפעה גם מעבר לצוות שלי ולחזק את שיתופי הפעולה בארגון",
+      "circle": 3,
+      "subCategory": "lateral-influence"
+    },
+    {
+      "id": 20,
+      "text": "אני משתף בידע שלי ומשפיע על תהליכים חוצי ארגון",
+      "circle": 3,
+      "subCategory": "lateral-influence"
+    },
+    {
+      "id": 21,
+      "text": "אני מחפש דרכים להציג את עבודת הצוות שלי ולהבליט את התרומה שלו לארגון",
+      "circle": 3,
+      "subCategory": "lateral-influence"
+    },
+    {
+      "id": 22,
+      "text": "אני יודע כיצד לנהל \"מעלה\" ולהשפיע על מקבלי ההחלטות בארגון",
+      "circle": 3,
+      "subCategory": "senior-management"
+    },
+    {
+      "id": 23,
+      "text": "אני מתקשר עם מנהלים בכירים בביטחון ובבהירות",
+      "circle": 3,
+      "subCategory": "senior-management"
+    },
+    {
+      "id": 24,
+      "text": "אני יודע כיצד להעביר את הצרכים של הצוות שלי להנהלה בצורה יעילה",
+      "circle": 3,
+      "subCategory": "senior-management"
+    },
+    {
+      "id": 25,
+      "text": "אני מבין את החזון והערכים של הארגון ומחבר אותם לעבודה היומיומית של הצוות שלי",
+      "circle": 3,
+      "subCategory": "collaboration-culture"
+    },
+    {
+      "id": 26,
+      "text": "אני פועל כדי לייצר תרבות של שיתוף פעולה וחיבור בין מחלקות שונות",
+      "circle": 3,
+      "subCategory": "collaboration-culture"
+    },
+    {
+      "id": 27,
+      "text": "אני מסביר לצוות שלי כיצד העבודה שלהם תורמת להצלחת הארגון כולו",
+      "circle": 3,
+      "subCategory": "collaboration-culture"
+    }
+  ],
+  "circles": [
+    {
+      "id": 1,
+      "title": "מעגל 1: הובלה עצמית",
+      "subtitle": "Leading Self",
+      "subCategories": [
+        {
+          "id": "self-awareness",
+          "title": "מודעות עצמית",
+          "description": "הכרת החוזקות האישיות והאתגרים האישיים",
+          "questionIds": [1, 2, 3]
+        },
+        {
+          "id": "personal-management",
+          "title": "ניהול אישי",
+          "description": "התמודדות עם עומסים, קבלת החלטות תחת לחץ ושחיקה",
+          "questionIds": [4, 5, 6]
+        },
+        {
+          "id": "personal-resilience",
+          "title": "חוסן אישי",
+          "description": "שמירה על מוטיבציה ופרואקטיביות בסביבה תובענית",
+          "questionIds": [7, 8, 9]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "מעגל 2: הובלת אחרים",
+      "subtitle": "Leading Others",
+      "subCategories": [
+        {
+          "id": "team-management",
+          "title": "ניהול והנעת צוות",
+          "description": "איך להוביל אנשים וליצור אמון בצוות",
+          "questionIds": [10, 11, 12]
+        },
+        {
+          "id": "relationship-building",
+          "title": "בניית מערכות יחסים",
+          "description": "התאמת סגנון הניהול לעובדים שונים",
+          "questionIds": [13, 14, 15]
+        },
+        {
+          "id": "feedback-conversations",
+          "title": "פידבק והובלת שיחות משמעותיות",
+          "description": "תקשורת אפקטיבית עם הצוות",
+          "questionIds": [16, 17, 18]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "מעגל 3: הובלה ארגונית",
+      "subtitle": "Leading the Organization",
+      "subCategories": [
+        {
+          "id": "lateral-influence",
+          "title": "השפעה רוחבית",
+          "description": "כיצד ראש צוות יכול להשפיע מעבר לצוות הישיר שלו?",
+          "questionIds": [19, 20, 21]
+        },
+        {
+          "id": "senior-management",
+          "title": "עבודה מול הנהלה בכירה",
+          "description": "כיצד להתמודד עם מנהלים ישירים חזקים ולנהל \"מעלה\"",
+          "questionIds": [22, 23, 24]
+        },
+        {
+          "id": "collaboration-culture",
+          "title": "תרבות של שיתוף פעולה",
+          "description": "יצירת חיבור בין הצוות לבין החזון הארגוני",
+          "questionIds": [25, 26, 27]
+        }
+      ]
+    }
+  ],
+  "markdown": {
+    "title": "תוצאות אבחון עצמי - שלושת מעגלי המנהיגות והניהול",
+    "circleScores": "ציונים לפי מעגל",
+    "subCategoryScores": "ציונים לפי תת-קטגוריות",
+    "circleLabel": "מעגל",
+    "subCategoryLabel": "תת-קטגוריה",
+    "scoreLabel": "ציון",
+    "maxScore": "ציון מקסימלי"
+  }
+}
