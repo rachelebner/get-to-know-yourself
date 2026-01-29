@@ -1,165 +1,141 @@
-# Parallel Questionnaire Processing Workflow
+# Parallel Feature Processing Workflow
 
 ## Overview
 
-Process multiple questionnaires from source documents to deployed code, working in parallel where possible.
+Process multiple features/tasks in parallel using git worktrees or separate branches. This document defines the general workflow pattern - specific batch plans reference this document.
+
+**Related:** See `docs/batch-plans/` for specific batch execution plans.
+
+---
+
+## When to Use This Workflow
+
+Use parallel processing when:
+- **3+ independent tasks** need implementation
+- Tasks have **minimal file overlap** (different folders/files)
+- You want to **maximize throughput** vs sequential work
+- Tasks can be **reviewed/tested independently**
+
+Don't use when:
+- Tasks are **highly interdependent** (changes to shared files)
+- Only **1-2 small tasks** (overhead not worth it)
+- Tasks require **sequential feedback loops**
 
 ---
 
 ## Directory Structure
 
 ```
-get-to-know-yourself/
-├── _inbox/                     # Temp upload location for source documents
-│   ├── questionnaire-a.pdf
-│   ├── questionnaire-b.docx
-│   └── ...
-├── communication-styles/       # Existing
-├── proactiveness/              # Existing
-├── situational-leadership/     # Existing
-└── [new-questionnaire]/        # Created per workflow
+project/
+├── docs/
+│   ├── parallel-process.md      # This file (general guidance)
+│   └── batch-plans/             # Specific batch execution plans
+│       └── [batch-name].md      # Individual batch plan
+├── _inbox/                      # Source documents/specs (if applicable)
+└── [feature-folders]/           # Created per task
 ```
 
-**Worktrees (parallel branches):**
+**Worktrees (for true parallelism):**
 ```
-get-to-know-yourself-[name]/    # One worktree per questionnaire
+project-[feature-name]/          # One worktree per feature
 ```
 
 ---
 
 ## Workflow Phases
 
-### Phase 0: Setup (Once)
+### Phase 0: Planning
 
-1. Create `_inbox/` folder in main repo
-2. User uploads all source documents to `_inbox/`
-3. Agent reviews documents, proposes folder names
+1. **Define the batch** - List all features/tasks
+2. **Analyze dependencies** - Identify shared files, execution order
+3. **Create batch plan** - Document in `docs/batch-plans/[name].md`
+4. **Determine parallelization** - How many concurrent tasks?
 
-**Deliverable:** List of questionnaires with proposed names
+**Deliverable:** Batch plan document with task list and dependencies
 
 ---
 
-### Phase 1: Worktree Creation (Parallel)
+### Phase 1: Setup (Sequential)
 
-For each questionnaire:
+1. Ensure main branch is up to date
+2. Create worktrees/branches for parallel work
+3. Set up any shared foundations (if needed)
 
 ```bash
-# From main repo
 git checkout main && git pull origin main
-git worktree add ../get-to-know-yourself-[name] -b ui/[name]
+git worktree add ../project-[feature-a] -b feat/[feature-a]
+git worktree add ../project-[feature-b] -b feat/[feature-b]
 ```
 
-**Naming convention:** 
-- Branch: `ui/[short-name]` (e.g., `ui/values-assessment`)
-- Worktree: `get-to-know-yourself-[short-name]`
-- Folder: `/[short-name]/` in repo
-
-**Deliverable:** 4 worktrees ready for parallel work
+**Deliverable:** Worktrees/branches ready for parallel work
 
 ---
 
-### Phase 2: Content Extraction (Parallel)
+### Phase 2: Implementation (Parallel)
 
-For each questionnaire:
+For each feature (in parallel):
 
-1. Move source doc from `_inbox/` to questionnaire folder
-2. Create `content.json` with:
-   - Questions extracted from source
-   - Answer options/scales
-   - Scoring rules
-   - Result categories/interpretations
-3. Create `README.md` documenting:
-   - Questionnaire structure
-   - Scoring algorithm
-   - Special handling notes
+1. Implement the feature in its worktree/branch
+2. Self-test within the worktree
+3. Commit with clear message
 
-**Deliverable:** `content.json` + `README.md` per questionnaire
+**Parallelization rules:**
+- Run up to N tasks concurrently (defined in batch plan)
+- When a slot opens, start next task from queue
+- Keep tasks in their designated folders to avoid conflicts
+
+**Deliverable:** Working feature per task
 
 ---
 
-### Phase 3: Implementation (Parallel)
+### Phase 3: Review (Mixed)
 
-For each questionnaire:
+Agent self-review checklist:
+- [ ] Feature works as specified
+- [ ] No lint errors introduced
+- [ ] Mobile responsive (if UI)
+- [ ] Follows existing patterns
 
-1. Create standard file structure:
-   ```
-   [questionnaire]/
-   ├── index.html
-   ├── styles.css
-   ├── app.js
-   ├── content.json
-   └── README.md
-   ```
+User review (if needed):
+- Test the feature
+- Provide feedback or approve
 
-2. Implement screens:
-   - Intro screen (instructions)
-   - Question screens (with navigation)
-   - Results screen(s)
-   - Analysis screens (if applicable)
-
-3. Follow existing patterns from `proactiveness/` or `communication-styles/`
-
-**Deliverable:** Working questionnaire app
+**Deliverable:** Review complete, feedback addressed
 
 ---
 
-### Phase 4: Review (Sequential per questionnaire)
+### Phase 4: Testing (Parallel)
 
-For each questionnaire:
-
-1. **Self-review checklist:**
-   - [ ] All questions match source document
-   - [ ] Scoring logic correct
-   - [ ] RTL layout works
-   - [ ] Mobile responsive
-   - [ ] "העתק תוצאות" works
-   - [ ] Navigation (prev/next/back to hub) works
-
-2. **User review:**
-   - Run locally, complete questionnaire
-   - Verify results match expected scoring
-   - Flag any content/UX issues
-
-**Deliverable:** Review feedback addressed
-
----
-
-### Phase 5: Testing (Parallel)
-
-For each questionnaire:
-
-1. Full walkthrough with various answer patterns
-2. Edge cases (all min, all max, mixed)
-3. Mobile device testing
-4. Copy results and verify markdown format
+For each feature:
+1. Run full test scenario
+2. Test edge cases
+3. Verify no regressions
 
 **Deliverable:** Test confirmation
 
 ---
 
-### Phase 6: Merge (Sequential)
+### Phase 5: Merge (Sequential)
 
-For each questionnaire (one at a time to avoid conflicts):
+Merge features one at a time to avoid conflicts:
 
 ```bash
 # In worktree
 git add -A
-git commit -m "feat: Add [questionnaire-name] questionnaire"
-git push -u origin ui/[name]
+git commit -m "feat: [description]"
+git push -u origin feat/[feature-name]
 
-# Create PR or merge directly
+# From main repo
 git checkout main
-git merge ui/[name]
+git merge feat/[feature-name]
 git push origin main
 
-# Cleanup worktree
-git worktree remove ../get-to-know-yourself-[name]
-git branch -d ui/[name]
+# Cleanup
+git worktree remove ../project-[feature-name]
+git branch -d feat/[feature-name]
 ```
 
-Update hub `index.html` to include new questionnaire card.
-
-**Deliverable:** Questionnaire live on main
+**Deliverable:** Features merged to main
 
 ---
 
@@ -167,13 +143,23 @@ Update hub `index.html` to include new questionnaire card.
 
 | Phase | Parallel? | Notes |
 |-------|-----------|-------|
-| 0. Setup | No | One-time setup |
-| 1. Worktree creation | Yes | All 4 at once |
-| 2. Content extraction | Yes | All 4 at once |
-| 3. Implementation | Yes | All 4 at once (different worktrees) |
-| 4. Review | Mixed | Can review multiple, but user time is serial |
-| 5. Testing | Yes | All 4 at once |
-| 6. Merge | No | One at a time to avoid conflicts |
+| 0. Planning | No | One-time setup |
+| 1. Setup | No | Sequential branch creation |
+| 2. Implementation | **Yes** | Main parallelization opportunity |
+| 3. Review | Mixed | Agent parallel, user serial |
+| 4. Testing | **Yes** | Can test multiple concurrently |
+| 5. Merge | No | Sequential to avoid conflicts |
+
+---
+
+## Concurrency Guidelines
+
+| Batch Size | Recommended Concurrent | Rationale |
+|------------|----------------------|-----------|
+| 2-3 tasks | 2 | Low overhead |
+| 4-6 tasks | 3-4 | Good balance |
+| 7-10 tasks | 4-5 | Agent context limits |
+| 10+ tasks | Split into waves | Avoid overwhelming |
 
 ---
 
@@ -181,40 +167,50 @@ Update hub `index.html` to include new questionnaire card.
 
 When working with agent, batch requests by phase:
 
-**Good:** "Extract content for all 4 questionnaires"  
-**Good:** "Create worktrees for: values, strengths, team-roles, conflict-styles"  
-**Less efficient:** "Do everything for questionnaire A, then B, then C, then D"
+**Good:**
+- "Implement all foundation tasks (F1, F2)"
+- "Integrate feature into all 7 questionnaires"
+
+**Less efficient:**
+- "Do everything for feature A, then B, then C"
+
+**Communication pattern:**
+```
+User: "Start Phase 2 - implement F1, F2, F3 in parallel"
+Agent: [implements all three]
+Agent: "F1, F2, F3 complete. Ready for Phase 3 review?"
+```
 
 ---
 
 ## Handoff Points
 
-Clear handoff between user and agent:
+Clear handoffs between user and agent:
 
-| Step | Owner | Handoff |
-|------|-------|---------|
-| Upload source docs | User | "Documents uploaded to _inbox/" |
-| Review proposed names | User | "Names approved" or "Change X to Y" |
-| Review extracted content | User | "Content verified" or "Fix question 5" |
-| Test completed app | User | "Approved" or "Issues: ..." |
+| Step | Owner | Handoff Signal |
+|------|-------|----------------|
+| Define batch | User | "Batch plan ready in docs/batch-plans/X.md" |
+| Approve plan | User | "Plan approved, start Phase 1" |
+| Review implementation | User | "Approved" or "Issues: ..." |
 | Final approval | User | "Merge it" |
 
 ---
 
-## Status Tracking
+## Status Tracking Template
 
-| Questionnaire | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Phase 5 | Phase 6 |
-|---------------|---------|---------|---------|---------|---------|---------|
-| engagement-drivers | [x] | [x] | [x] | [ ] | [ ] | [ ] |
-| leadership-circles | [x] | [x] | [x] | [ ] | [ ] | [ ] |
-| managerial-courage | [x] | [x] | [x] | [ ] | [ ] | [ ] |
-| assertiveness | [x] | [x] | [x] | [ ] | [ ] | [ ] |
+Copy this to your batch plan:
 
-**Last updated:** 2026-01-28
+```markdown
+## Status
 
-**Notes:**
-- All 4 worktrees created and committed
-- Awaiting user review (Phase 4) before testing and merge
+| Task | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Phase 5 |
+|------|---------|---------|---------|---------|---------|
+| task-a | [ ] | [ ] | [ ] | [ ] | [ ] |
+| task-b | [ ] | [ ] | [ ] | [ ] | [ ] |
+
+**Last updated:** [DATE]
+**Notes:** [Current status]
+```
 
 ---
 
@@ -224,12 +220,57 @@ Clear handoff between user and agent:
 # List all worktrees
 git worktree list
 
+# Create new worktree
+git worktree add ../project-[name] -b feat/[name]
+
 # Switch to worktree
-cd ../get-to-know-yourself-[name]
+cd ../project-[name]
 
 # Check branch status
 git status
 
 # Remove worktree after merge
-git worktree remove ../get-to-know-yourself-[name]
+git worktree remove ../project-[name]
+git branch -d feat/[name]
 ```
+
+---
+
+## Batch Plan Template
+
+Create new batch plans in `docs/batch-plans/[name].md`:
+
+```markdown
+# [Batch Name] - Parallel Execution Plan
+
+**Batch ID:** [unique-id]
+**Created:** [date]
+**Status:** Planning | In Progress | Complete
+
+## Overview
+[What this batch accomplishes]
+
+## Tasks
+
+| ID | Task | Description | Dependencies |
+|----|------|-------------|--------------|
+| T1 | ... | ... | None |
+| T2 | ... | ... | T1 |
+
+## Execution Strategy
+- **Max concurrent:** [N]
+- **Estimated phases:** [N rounds]
+
+## Phase Breakdown
+[Details per phase]
+
+## Status Tracking
+[Use template from parallel-process.md]
+```
+
+---
+
+## See Also
+
+- `docs/batch-plans/` - Specific batch execution plans
+- `docs/questionnaire-patterns.md` - Questionnaire-specific patterns
