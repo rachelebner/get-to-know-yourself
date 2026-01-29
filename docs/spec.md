@@ -14,28 +14,31 @@ A vanilla HTML/CSS/JS hub for personality questionnaires. Each questionnaire is 
 ```
 /
 ├── index.html              # Hub page - questionnaire directory
-├── styles.css              # Hub styles
-├── shared.css              # Shared styles (tokens, buttons, badges, actions)
+├── hub.css                 # Hub-specific styles
 ├── favicon.svg             # Site favicon (blue question mark)
 ├── logo.avif               # Site logo
-├── lib/                    # Shared JavaScript utilities
+├── lib/                    # Shared utilities (CSS + JS)
+│   ├── shared.css          # Shared styles (tokens, buttons, badges, actions)
 │   ├── testmode.js         # Test mode detection and UI
 │   └── share.js            # Multi-format copy/share utilities
 ├── docs/
 │   ├── spec.md             # This file (requirements)
 │   ├── design.md           # Technical implementation details
 │   └── retro.md            # Retrospective, workflow insights, session logs
-└── [questionnaire-name]/   # Each questionnaire follows same pattern
-    ├── index.html
-    ├── styles.css
-    ├── app.js
-    ├── content.json        # Hebrew text content
-    └── README.md           # Questionnaire-specific structure
+├── templates/              # Reusable questionnaire templates
+│   └── likert-categories/  # For Likert scale + category scoring
+└── quizzes/                # All questionnaires
+    └── [questionnaire-name]/
+        ├── index.html
+        ├── styles.css
+        ├── app.js
+        ├── content.json    # Hebrew text content
+        └── README.md       # Questionnaire-specific structure
 ```
 
 ### Design Principles
 
-- **Shared styles** - `shared.css` contains design tokens, buttons, header badges, and action button layouts
+- **Shared styles** - `lib/shared.css` contains design tokens, buttons, header badges, and action button layouts
 - **Mostly self-contained** - each questionnaire has its own layout/component CSS
 - No build tools, no frameworks - vanilla everything
 - Mobile-ready by default
@@ -96,7 +99,7 @@ Each questionnaire is a single-page app with multiple screens. The specific stru
 - Interpretation logic
 
 **See each questionnaire's `README.md` for its specific structure.**  
-Example: `proactiveness/README.md`
+Example: `quizzes/proactiveness/README.md`
 
 ---
 
@@ -119,13 +122,13 @@ Example: `proactiveness/README.md`
 
 | Name | Folder | Status |
 |------|--------|--------|
-| מנוף הפרואקטיביות | `/proactiveness` | ✅ Complete |
-| סגנונות תקשורת | `/communication-styles` | ✅ Complete |
-| שאלון ניהול מצבי | `/situational-leadership` | ✅ Complete |
-| מנועי המחוברות | `/engagement-drivers` | ✅ Complete |
-| שלושת מעגלי המנהיגות | `/leadership-circles` | ✅ Complete |
-| מודל אומץ | `/managerial-courage` | ✅ Complete |
-| אסרטיביות | `/assertiveness` | ✅ Complete |
+| מנוף הפרואקטיביות | `/quizzes/proactiveness` | ✅ Complete |
+| סגנונות תקשורת | `/quizzes/communication-styles` | ✅ Complete |
+| שאלון ניהול מצבי | `/quizzes/situational-leadership` | ✅ Complete |
+| מנועי המחוברות | `/quizzes/engagement-drivers` | ✅ Complete |
+| שלושת מעגלי המנהיגות | `/quizzes/leadership-circles` | ✅ Complete |
+| מודל אומץ | `/quizzes/managerial-courage` | ✅ Complete |
+| אסרטיביות | `/quizzes/assertiveness` | ✅ Complete |
 
 ---
 
@@ -142,4 +145,4 @@ Example: `proactiveness/README.md`
 ## See Also
 
 - `docs/design.md` - Technical implementation details, component patterns
-- `proactiveness/README.md` - First questionnaire's specific structure
+- `quizzes/proactiveness/README.md` - First questionnaire's specific structure

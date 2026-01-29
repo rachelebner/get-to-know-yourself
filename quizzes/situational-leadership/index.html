@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+    <title>שאלון ניהול מצבי</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app__header">
+        <a href="../../" class="back-link">← חזרה למרכז השאלונים</a>
+        <img src="../../logo.avif" alt="מירב ים חן" class="app__logo" />
+        <div class="app__badge">שאלון ניהול מצבי</div>
+        <h1>אבחון סגנונות ניהול</h1>
+        <p class="app__subtitle">
+          לפי תיאוריית הניהול המצבי של הרסי ובלנצ'רד
+        </p>
+      </header>
+
+      <main class="card" id="card">
+        <section class="screen screen--active" id="intro">
+          <h2>הנחיות</h2>
+          <ul class="steps">
+            <li>לפניך 12 תיאורים של מצבים בניהול.</li>
+            <li>כל מצב מציג בעיה הנוגעת לכפיפים ומציע 4 אפשרויות פעולה.</li>
+            <li>דמיינו את עצמכם כמנהל ובחרו את הפעולה שהייתם נוקטים.</li>
+            <li>אין תשובות נכונות או לא נכונות — המטרה היא לזהות את סגנון הניהול הטבעי שלכם.</li>
+          </ul>
+          <div class="actions actions--center">
+            <button class="primary" id="start">מתחילים</button>
+            <a href="../../" class="ghost">חזרה למרכז השאלונים</a>
+          </div>
+        </section>
+
+        <section class="screen" id="question-screen" aria-live="polite">
+          <div class="progress">
+            <span id="progress-text">מצב 1 מתוך 12</span>
+            <div class="progress__bar">
+              <div class="progress__fill" id="progress-fill"></div>
+            </div>
+          </div>
+          <div class="question">
+            <div class="scenario" id="scenario"></div>
+            <div class="options" id="options">
+              <!-- Options will be populated by JS -->
+            </div>
+          </div>
+          <div class="actions actions--bottom">
+            <button class="ghost" id="prev" disabled>חזרה</button>
+            <button class="primary" id="next" disabled>הבא</button>
+          </div>
+        </section>
+
+        <section class="screen screen--scroll" id="results">
+          <h2>התוצאות שלך</h2>
+          <p class="app__subtitle">
+            פרופיל סגנונות הניהול שלך על בסיס 12 המצבים
+          </p>
+          <div class="results-grid" id="results-grid"></div>
+          <div class="results-interpretation" id="results-interpretation"></div>
+          <div class="actions results-actions">
+            <button class="ghost" id="back-to-questions">חזרה לשאלות</button>
+            <button class="primary" id="to-analysis">לניתוח מפורט</button>
+            <button class="ghost" id="restart">מילוי מחדש</button>
+          </div>
+        </section>
+
+        <section class="screen screen--scroll" id="analysis">
+          <h2>ניתוח מפורט</h2>
+          <p class="app__subtitle">
+            הבנת ארבעת סגנונות הניהול וההתאמה למצבים שונים
+          </p>
+          <div class="analysis-content" id="analysis-content"></div>
+          <div class="actions results-actions">
+            <button class="ghost" id="back-to-results">חזרה לתוצאות</button>
+            <div id="share-buttons-container"></div>
+            <button class="ghost" id="back-to-questions-analysis">חזרה לשאלות</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

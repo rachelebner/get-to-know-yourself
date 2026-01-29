@@ -14,11 +14,11 @@
 ```
 /
 ├── index.html              # Hub page (questionnaire directory)
-├── styles.css              # Hub-only styles
-├── shared.css              # Shared styles (tokens, buttons, badges, actions)
+├── hub.css                 # Hub-only styles
 ├── favicon.svg             # Site favicon (blue gradient + question mark)
 ├── logo.avif               # Site logo
-├── lib/                    # Shared JavaScript utilities
+├── lib/                    # Shared utilities (CSS + JS)
+│   ├── shared.css          # Shared styles (tokens, buttons, badges, actions)
 │   ├── testmode.js         # Test mode detection, toggle, indicator
 │   └── share.js            # Multi-format copy/share utilities
 ├── docs/
@@ -26,20 +26,21 @@
 │   ├── design.md
 │   ├── retro.md            # Retrospective, workflow insights, session logs
 │   └── parallel-process.md # Workflow for parallel work
-├── _templates/             # Reusable questionnaire templates
+├── templates/              # Reusable questionnaire templates
 │   └── likert-categories/  # For Likert scale + category scoring
-└── [questionnaire]/        # Each questionnaire folder
-    ├── index.html
-    ├── styles.css          # Imports ../shared.css + local overrides
-    ├── app.js              # Imports from ../lib/ for shared functionality
-    ├── content.json        # Hebrew content
-    ├── README.md           # Documents this questionnaire's specific structure
-    └── *.pdf / *.docx      # Source document(s) - original questionnaire file
+└── quizzes/                # All questionnaires
+    └── [questionnaire]/    # Each questionnaire folder
+        ├── index.html
+        ├── styles.css      # Imports ../../lib/shared.css + local overrides
+        ├── app.js          # Imports from ../../lib/ for shared functionality
+        ├── content.json    # Hebrew content
+        ├── README.md       # Documents this questionnaire's specific structure
+        └── *.pdf / *.docx  # Source document(s) - original questionnaire file
 ```
 
 ### Design Decision: Shared Styles
 
-**Approach:** Single `shared.css` at root with common UI patterns.
+**Approach:** Single `lib/shared.css` with common UI patterns.
 
 **What goes in `shared.css`:**
 - CSS custom properties (colors, radii, shadows, fonts)
@@ -55,7 +56,7 @@
 
 **Usage in questionnaire CSS:**
 ```css
-@import url("../shared.css");
+@import url("../../lib/shared.css");
 
 /* Local styles below */
 ```
@@ -129,7 +130,7 @@ Grid item linking to a questionnaire.
   <div class="questionnaire-card__meta">
     <span class="questionnaire-card__time">כ-5 דקות</span>
   </div>
-  <a href="./proactiveness/" class="questionnaire-card__cta primary">התחל</a>
+  <a href="./quizzes/proactiveness/" class="questionnaire-card__cta primary">התחל</a>
 </article>
 ```
 
@@ -349,7 +350,7 @@ Every questionnaire needs a link back to the hub.
 **Option A: In header**
 ```html
 <header class="app__header">
-  <a href="../" class="back-link">← חזרה למרכז השאלונים</a>
+  <a href="../../" class="back-link">← חזרה למרכז השאלונים</a>
   <!-- ... rest of header -->
 </header>
 ```
@@ -357,7 +358,7 @@ Every questionnaire needs a link back to the hub.
 **Option B: In final screen**
 ```html
 <div class="actions">
-  <a href="../" class="ghost">חזרה למרכז השאלונים</a>
+  <a href="../../" class="ghost">חזרה למרכז השאלונים</a>
   <!-- ... other actions -->
 </div>
 ```
@@ -372,7 +373,7 @@ Every questionnaire needs a link back to the hub.
 
 Question types, scoring logic, analysis patterns, and result formats vary by questionnaire. Document these in a local `README.md` within each questionnaire folder.
 
-See `proactiveness/README.md` for the first example.
+See `quizzes/proactiveness/README.md` for the first example.
 
 ### Source Documents (MANDATORY)
 
@@ -384,20 +385,20 @@ Source documents are the original PDF, DOCX, or other files that contain:
 - Interpretation guidelines and category descriptions
 
 **Requirements:**
-- Store source files directly in the questionnaire folder (e.g., `proactiveness/שאלון.pdf`)
+- Store source files directly in the questionnaire folder (e.g., `quizzes/proactiveness/שאלון.pdf`)
 - Keep original Hebrew filenames for traceability
 - Commit source documents to git (they are part of the project)
 - Reference the source in the questionnaire's `README.md`
 
 **Current source documents:**
 ```
-proactiveness/שאלון אבחון מנופי הפרואקטיביות כולל פענוח.pdf
-communication-styles/שאלון סגנונות תקשורת 2020.docx
-situational-leadership/[source document needed]
-engagement-drivers/מנועי המחוברות קווין קרוז שאלון.pdf
-leadership-circles/שאלון אבחון עצמי 3 מעגלי המנהיגות והניהול.docx
-managerial-courage/שאלון אומץ (קליין וקליין).pdf
-assertiveness/שאלון אסרטיביות.rtf
+quizzes/proactiveness/שאלון אבחון מנופי הפרואקטיביות כולל פענוח.pdf
+quizzes/communication-styles/שאלון סגנונות תקשורת 2020.docx
+quizzes/situational-leadership/[source document needed]
+quizzes/engagement-drivers/מנועי המחוברות קווין קרוז שאלון.pdf
+quizzes/leadership-circles/שאלון אבחון עצמי 3 מעגלי המנהיגות והניהול.docx
+quizzes/managerial-courage/שאלון אומץ (קליין וקליין).pdf
+quizzes/assertiveness/שאלון אסרטיביות.rtf
 ```
 
 **Rationale:**
@@ -471,7 +472,7 @@ const typeDescription = content.types[typeId].description;
 
 ## Questionnaire Templates
 
-Reusable templates for common questionnaire patterns are stored in `_templates/`.
+Reusable templates for common questionnaire patterns are stored in `templates/`.
 
 ### Available Templates
 
@@ -489,10 +490,10 @@ For questionnaires that:
 
 **File structure:**
 ```
-_templates/likert-categories/
+templates/likert-categories/
 ├── README.md           # Usage instructions
 ├── index.html          # HTML template with all screen variants
-├── styles.css          # Complete styles (imports ../shared.css)
+├── styles.css          # Complete styles (imports ../../lib/shared.css)
 ├── app.js              # Config-driven logic
 └── content-schema.json # JSON schema for content.json
 ```
@@ -513,13 +514,13 @@ _templates/likert-categories/
 - `tiered`: Low/medium/high interpretation based on score ranges (requires `category.interpretation`)
 
 **To use:**
-1. Copy `_templates/likert-categories/` to new questionnaire folder
+1. Copy `templates/likert-categories/` to `quizzes/[new-questionnaire]/`
 2. Create `content.json` following the schema
 3. Update `index.html` header and title
 4. Optionally customize `styles.css`
 5. Remove analysis screen section if `hasAnalysisScreen: false`
 
-See `_templates/likert-categories/README.md` for detailed instructions.
+See `templates/likert-categories/README.md` for detailed instructions.
 
 ---
 
@@ -572,9 +573,9 @@ Google Fonts loaded via CSS `@import` or `<link>`:
 
 ## Implementation Order
 
-1. **Create `shared.css`** with tokens + buttons extracted from proactiveness
-2. **Update proactiveness** to import `shared.css`, remove duplicated token/button styles
-3. **Build hub page** (`index.html`, `styles.css`) importing `shared.css`
+1. **Create `lib/shared.css`** with tokens + buttons extracted from proactiveness
+2. **Update proactiveness** to import `lib/shared.css`, remove duplicated token/button styles
+3. **Build hub page** (`index.html`, `hub.css`) importing `lib/shared.css`
 4. **Add back-to-hub link** to proactiveness questionnaire
 5. **Test on mobile** and adjust responsive behavior
 
@@ -583,4 +584,4 @@ Google Fonts loaded via CSS `@import` or `<link>`:
 ## See Also
 
 - `docs/spec.md` - Product requirements, features, hub/questionnaire specs
-- `proactiveness/README.md` - First questionnaire's specific data model and patterns
+- `quizzes/proactiveness/README.md` - First questionnaire's specific data model and patterns

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+    <title>מנוף הפרואקטיביות</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app__header">
+        <a href="../../" class="back-link">← חזרה למרכז השאלונים</a>
+        <img src="../../logo.avif" alt="מירב ים חן" class="app__logo" />
+        <div class="app__badge">מנוף הפרואקטיביות</div>
+        <h1>גלה את דפוסי ההתנהלות שלך</h1>
+        <p class="app__subtitle">
+          עונים על כל שאלה לפי הסקאלה 1-5, ומתקדמים שלב אחר שלב.
+        </p>
+      </header>
+
+      <main class="card" id="card">
+        <section class="screen screen--active" id="intro">
+          <h2>הנחיות קצרות</h2>
+          <ul class="steps">
+            <li>בכל סעיף מופיעים שני היגדים — אחד מימין ואחד משמאל.</li>
+            <li>סמנו 1-5 לפי הנקודה שמייצגת את הנטייה הטבעית שלכם.</li>
+            <li>1 או 5 משקפים הזדהות מלאה, ו-3 נמצא באמצע.</li>
+            <li>אין תשובות נכונות או לא נכונות — זו הזדמנות לשיקוף עצמי.</li>
+          </ul>
+          <div class="actions actions--center">
+            <button class="primary" id="start">מתחילים</button>
+            <a href="../../" class="ghost">חזרה למרכז השאלונים</a>
+          </div>
+        </section>
+
+        <section class="screen" id="question-screen" aria-live="polite">
+          <div class="progress">
+            <span id="progress-text">שאלה 1 מתוך 18</span>
+            <div class="progress__bar">
+              <div class="progress__fill" id="progress-fill"></div>
+            </div>
+          </div>
+          <div class="question">
+            <div class="question__pair">
+              <div class="statement statement--right" id="statement-right"></div>
+              <div class="statement statement--left" id="statement-left"></div>
+            </div>
+            <div class="question__hint">
+              1 = הזדהות מלאה עם ההיגד הימני, 5 = הזדהות מלאה עם ההיגד השמאלי.
+            </div>
+          </div>
+          <div class="scale">
+            <label class="scale__item">
+              <input type="radio" name="score" value="1" />
+              <span>1</span>
+            </label>
+            <label class="scale__item">
+              <input type="radio" name="score" value="2" />
+              <span>2</span>
+            </label>
+            <label class="scale__item">
+              <input type="radio" name="score" value="3" />
+              <span>3</span>
+            </label>
+            <label class="scale__item">
+              <input type="radio" name="score" value="4" />
+              <span>4</span>
+            </label>
+            <label class="scale__item">
+              <input type="radio" name="score" value="5" />
+              <span>5</span>
+            </label>
+          </div>
+          <div class="actions actions--bottom">
+            <button class="ghost" id="prev" disabled>חזרה</button>
+            <button class="primary" id="next" disabled>הבא</button>
+          </div>
+        </section>
+
+        <section class="screen screen--scroll" id="results">
+          <h2>התוצאות שלך</h2>
+          <p class="app__subtitle">
+            סכמו את הציון בכל תחום וראו איפה הכוחות המרכזיים שלכם.
+          </p>
+          <div class="results" id="results-grid"></div>
+          <div class="actions results-actions">
+            <button class="ghost" id="back-to-questions">חזרה לשאלות</button>
+            <button class="primary" id="to-analysis">לניתוח אישי</button>
+            <button class="ghost" id="restart">מילוי מחדש</button>
+          </div>
+        </section>
+
+        <section class="screen screen--scroll" id="analysis">
+          <h2>ניתוח תוצאות אישי</h2>
+          <p class="app__subtitle">
+            המסקנות מבוססות על מודל מנופי הפרואקטיביות והחלוקה בין
+            תגובתיות לפרואקטיביות.
+          </p>
+          <div class="analysis-summary" id="analysis-summary"></div>
+          <div class="analysis-grid" id="analysis-grid"></div>
+          <div class="actions results-actions">
+            <button class="ghost" id="back-to-results">חזרה לתוצאות</button>
+            <button class="primary" id="to-insights">לתובנות אישיות</button>
+            <button class="ghost" id="back-to-questions-analysis">חזרה לשאלות</button>
+          </div>
+        </section>
+
+        <section class="screen screen--scroll" id="insights">
+          <h2>תובנות אישיות</h2>
+          <p class="app__subtitle">
+            מדריך מעשי לחיזוק מנופי הפרואקטיביות על בסיס הדפוסים שזוהו אצלך.
+          </p>
+          <div class="insights" id="insights-grid"></div>
+          <div class="insights-summary insights__block insights__block--summary" id="insights-summary"></div>
+          <div class="actions results-actions">
+            <button class="ghost" id="back-to-analysis">חזרה לניתוח</button>
+            <div id="share-buttons-container"></div>
+            <button class="ghost" id="back-to-questions-insights">חזרה לשאלות</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
