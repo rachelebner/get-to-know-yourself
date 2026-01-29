@@ -256,7 +256,18 @@ const buildResultsMarkdown = () => {
   const { highest, isTie, sorted, topDrivers } = getHighestDriver(scores);
   const allLow = allScoresBelow12(scores);
 
-  const lines = [`# ${content.markdown.title}`, "", `## ${content.markdown.categoryScores}`];
+  const lines = [];
+
+  // Test mode warning at top
+  if (isTestMode()) {
+    lines.push("⚠️ **תוצאות בדיקה** - דוגמה על בסיס מילוי אקראי");
+    lines.push("⚠️ **לא תוצאות אמיתיות**");
+    lines.push("");
+    lines.push("---");
+    lines.push("");
+  }
+
+  lines.push(`# ${content.markdown.title}`, "", `## ${content.markdown.categoryScores}`);
 
   scores.forEach((category) => {
     const isTopDriver = topDrivers.some((d) => d.id === category.id);
@@ -291,6 +302,19 @@ const buildResultsMarkdown = () => {
     lines.push(content.results.worthIt);
   }
 
+  // Test mode Q&A table at end
+  if (isTestMode()) {
+    lines.push("");
+    lines.push("---");
+    lines.push("");
+    lines.push("## פירוט התשובות (מילוי אקראי)");
+    lines.push("| מספר שאלה | תשובה שנבחרה |");
+    lines.push("|-----------|--------------|");
+    answers.forEach((answer, index) => {
+      lines.push(`| ${index + 1} | ${answer} |`);
+    });
+  }
+
   return lines.join("\n");
 };
 
@@ -298,8 +322,16 @@ const buildResultsRichText = () => {
   const scores = getCategoryScores();
   const { highest, isTie, sorted, topDrivers } = getHighestDriver(scores);
   const allLow = allScoresBelow12(scores);
+
+  // Test mode warning
+  let html = isTestMode() ? `
+    <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px;">
+      <div style="font-weight: bold; color: #856404;">⚠️ תוצאות בדיקה - דוגמה על בסיס מילוי אקראי</div>
+      <div style="font-weight: bold; color: #856404;">⚠️ לא תוצאות אמיתיות</div>
+    </div>
+  ` : '';
   
-  let html = `<h1>${content.markdown.title}</h1>`;
+  html += `<h1>${content.markdown.title}</h1>`;
   html += `<h2>${content.markdown.categoryScores}</h2>`;
   html += '<ul>';
   
@@ -325,6 +357,30 @@ const buildResultsRichText = () => {
     html += `<p>${content.results.sharedResponsibility}</p>`;
     html += `<p>${content.results.actionPlan}</p>`;
     html += `<p><strong>${content.results.worthIt}</strong></p>`;
+  }
+
+  // Test mode Q&A table
+  if (isTestMode()) {
+    html += `
+      <hr style="margin: 24px 0;">
+      <h2>פירוט התשובות (מילוי אקראי)</h2>
+      <table style="border-collapse: collapse; width: 100%; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; text-align: center; border: 1px solid #ddd;">מספר שאלה</th>
+            <th style="padding: 8px; text-align: center; border: 1px solid #ddd;">תשובה שנבחרה</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${answers.map((answer, index) => `
+            <tr>
+              <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${index + 1}</td>
+              <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${answer}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
   }
   
   return html;

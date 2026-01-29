@@ -179,14 +179,25 @@ const buildResultsMarkdown = () => {
   const scores = getCategoryScores();
   const sorted = [...scores].sort((a, b) => b.sum - a.sum);
   const dominant = getDominantDrivers(scores);
+
+  const lines = [];
+
+  // Test mode warning at top
+  if (isTestMode()) {
+    lines.push("⚠️ **תוצאות בדיקה** - דוגמה על בסיס מילוי אקראי");
+    lines.push("⚠️ **לא תוצאות אמיתיות**");
+    lines.push("");
+    lines.push("---");
+    lines.push("");
+  }
   
-  const lines = [
+  lines.push(
     `# ${content.markdown.title}`,
     "",
     `> ${content.results.modelContext}`,
     "",
-    `## ${content.markdown.categoryScores}`,
-  ];
+    `## ${content.markdown.categoryScores}`
+  );
   
   sorted.forEach((category) => {
     const isDominant = dominant.some((d) => d.id === category.id);
@@ -227,6 +238,19 @@ const buildResultsMarkdown = () => {
   content.analysis.reflectionQuestions.forEach((q) => {
     lines.push(`- ${q}`);
   });
+
+  // Test mode Q&A table at end
+  if (isTestMode()) {
+    lines.push("");
+    lines.push("---");
+    lines.push("");
+    lines.push("## פירוט התשובות (מילוי אקראי)");
+    lines.push("| מספר שאלה | תשובה שנבחרה |");
+    lines.push("|-----------|--------------|");
+    answers.forEach((answer, index) => {
+      lines.push(`| ${index + 1} | ${answer} |`);
+    });
+  }
   
   return lines.join("\n");
 };
@@ -275,8 +299,39 @@ const buildResultsRichText = () => {
   const reflectionItems = content.analysis.reflectionQuestions
     .map((q) => `<li style="margin-bottom: 8px;">${q}</li>`)
     .join('');
+
+  // Test mode warning
+  const testModeWarning = isTestMode() ? `
+    <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px;">
+      <div style="font-weight: bold; color: #856404;">⚠️ תוצאות בדיקה - דוגמה על בסיס מילוי אקראי</div>
+      <div style="font-weight: bold; color: #856404;">⚠️ לא תוצאות אמיתיות</div>
+    </div>
+  ` : '';
+
+  // Test mode Q&A table
+  const testModeTable = isTestMode() ? `
+    <hr style="margin: 24px 0;">
+    <h2>פירוט התשובות (מילוי אקראי)</h2>
+    <table style="border-collapse: collapse; width: 100%; margin-top: 12px;">
+      <thead>
+        <tr style="background: #f5f5f5;">
+          <th style="padding: 8px; text-align: center; border: 1px solid #ddd;">מספר שאלה</th>
+          <th style="padding: 8px; text-align: center; border: 1px solid #ddd;">תשובה שנבחרה</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${answers.map((answer, index) => `
+          <tr>
+            <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${index + 1}</td>
+            <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${answer}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  ` : '';
   
   return `
+    ${testModeWarning}
     <h1 style="margin-bottom: 16px;">${content.markdown.title}</h1>
     <blockquote style="margin: 16px 0; padding: 12px 16px; background: #f5f7ff; border-right: 4px solid #4c66ff; border-radius: 4px;">
       ${content.results.modelContext}
@@ -291,6 +346,7 @@ const buildResultsRichText = () => {
     ` : ''}
     <h2 style="margin-top: 24px; margin-bottom: 12px;">${content.analysis.reflectionTitle}</h2>
     <ul style="margin: 0; padding-right: 20px;">${reflectionItems}</ul>
+    ${testModeTable}
   `;
 };
 

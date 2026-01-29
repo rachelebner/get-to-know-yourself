@@ -251,11 +251,22 @@ function buildResultsMarkdown() {
   const dominantTypes = sorted.slice(0, 2);
   const minorTypes = sorted.slice(2, 4);
 
-  const lines = [
+  const lines = [];
+
+  // Test mode warning at top
+  if (isTestMode()) {
+    lines.push("⚠️ **תוצאות בדיקה** - דוגמה על בסיס מילוי אקראי");
+    lines.push("⚠️ **לא תוצאות אמיתיות**");
+    lines.push("");
+    lines.push("---");
+    lines.push("");
+  }
+
+  lines.push(
     "# תוצאות שאלון סגנונות תקשורת",
     "",
-    "## ציונים לפי סגנון",
-  ];
+    "## ציונים לפי סגנון"
+  );
 
   // All scores
   sorted.forEach((type) => {
@@ -289,6 +300,20 @@ function buildResultsMarkdown() {
     lines.push(`- **${type.title}**: ${type.score}/10`);
   });
 
+  // Test mode Q&A table at end
+  if (isTestMode()) {
+    lines.push("");
+    lines.push("---");
+    lines.push("");
+    lines.push("## פירוט התשובות (מילוי אקראי)");
+    lines.push("| מספר שאלה | תשובה שנבחרה |");
+    lines.push("|-----------|--------------|");
+    answers.forEach((answer, index) => {
+      const hebrewAnswer = answer === "yes" ? "כן" : "לא";
+      lines.push(`| ${index + 1} | ${hebrewAnswer} |`);
+    });
+  }
+
   return lines.join("\n");
 }
 
@@ -298,7 +323,15 @@ function buildResultsHTML() {
   const dominantTypes = sorted.slice(0, 2);
   const minorTypes = sorted.slice(2, 4);
 
-  let html = '<h1>תוצאות שאלון סגנונות תקשורת</h1>';
+  // Test mode warning
+  let html = isTestMode() ? `
+    <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px;">
+      <div style="font-weight: bold; color: #856404;">⚠️ תוצאות בדיקה - דוגמה על בסיס מילוי אקראי</div>
+      <div style="font-weight: bold; color: #856404;">⚠️ לא תוצאות אמיתיות</div>
+    </div>
+  ` : '';
+
+  html += '<h1>תוצאות שאלון סגנונות תקשורת</h1>';
   html += '<h2>ציונים לפי סגנון</h2>';
   html += '<ul>';
   sorted.forEach((type) => {
@@ -327,6 +360,33 @@ function buildResultsHTML() {
     html += `<li><strong>${type.title}</strong>: ${type.score}/10</li>`;
   });
   html += '</ul>';
+
+  // Test mode Q&A table
+  if (isTestMode()) {
+    html += `
+      <hr style="margin: 24px 0;">
+      <h2>פירוט התשובות (מילוי אקראי)</h2>
+      <table style="border-collapse: collapse; width: 100%; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; text-align: center; border: 1px solid #ddd;">מספר שאלה</th>
+            <th style="padding: 8px; text-align: center; border: 1px solid #ddd;">תשובה שנבחרה</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${answers.map((answer, index) => {
+            const hebrewAnswer = answer === "yes" ? "כן" : "לא";
+            return `
+              <tr>
+                <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${index + 1}</td>
+                <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${hebrewAnswer}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
   
   return html;
 }

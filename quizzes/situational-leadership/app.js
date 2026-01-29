@@ -293,7 +293,16 @@ function exportResults() {
   const exp = CONTENT.export;
   const headers = exp.tableHeaders;
 
-  let markdown = `# ${exp.title}\n\n`;
+  let markdown = '';
+
+  // Test mode warning at top
+  if (isTestMode()) {
+    markdown += "⚠️ **תוצאות בדיקה** - דוגמה על בסיס מילוי אקראי\n";
+    markdown += "⚠️ **לא תוצאות אמיתיות**\n\n";
+    markdown += "---\n\n";
+  }
+
+  markdown += `# ${exp.title}\n\n`;
   markdown += `## ${exp.profileTitle}\n\n`;
   markdown += `| ${headers.style} | ${headers.choices} | ${headers.effectiveness} | ${headers.interpretation} |\n`;
   markdown += `|-------|-------------|-------------|-------|\n`;
@@ -325,6 +334,18 @@ function exportResults() {
     markdown += `- ${data.effectiveness >= 0 ? style.effective : style.ineffective}\n\n`;
   });
 
+  // Test mode Q&A table at end
+  if (isTestMode()) {
+    markdown += "---\n\n";
+    markdown += "## פירוט התשובות (מילוי אקראי)\n";
+    markdown += "| מספר מצב | תשובה שנבחרה |\n";
+    markdown += "|----------|---------------|\n";
+    CONTENT.questions.forEach((q) => {
+      const answer = answers[q.id];
+      markdown += `| ${q.id} | ${answer || '-'} |\n`;
+    });
+  }
+
   return markdown;
 }
 
@@ -340,7 +361,15 @@ function exportResultsRichText() {
     .filter(([, data]) => data.count === maxCount)
     .map(([styleId]) => styles[styleId].title);
 
-  let html = `<h1>${exp.title}</h1>`;
+  // Test mode warning
+  let html = isTestMode() ? `
+    <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px;">
+      <div style="font-weight: bold; color: #856404;">⚠️ תוצאות בדיקה - דוגמה על בסיס מילוי אקראי</div>
+      <div style="font-weight: bold; color: #856404;">⚠️ לא תוצאות אמיתיות</div>
+    </div>
+  ` : '';
+
+  html += `<h1>${exp.title}</h1>`;
   html += `<h2>${exp.profileTitle}</h2>`;
   html += `<table style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">`;
   html += `<thead><tr style="background: #f5f5f5;">`;
@@ -379,6 +408,33 @@ function exportResultsRichText() {
     html += `<p>${data.effectiveness >= 0 ? style.effective : style.ineffective}</p>`;
     html += `</div>`;
   });
+
+  // Test mode Q&A table
+  if (isTestMode()) {
+    html += `
+      <hr style="margin: 24px 0;">
+      <h2>פירוט התשובות (מילוי אקראי)</h2>
+      <table style="border-collapse: collapse; width: 100%; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; text-align: center; border: 1px solid #ddd;">מספר מצב</th>
+            <th style="padding: 8px; text-align: center; border: 1px solid #ddd;">תשובה שנבחרה</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${CONTENT.questions.map((q) => {
+            const answer = answers[q.id];
+            return `
+              <tr>
+                <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${q.id}</td>
+                <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${answer || '-'}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
 
   return html;
 }
