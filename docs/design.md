@@ -19,7 +19,15 @@
 ├── docs/
 │   ├── spec.md
 │   ├── design.md
-│   └── retro.md            # Retrospective, workflow insights, session logs
+│   ├── retro.md            # Retrospective, workflow insights, session logs
+│   └── parallel-process.md # Workflow for batch questionnaire processing
+├── _templates/             # Reusable questionnaire templates
+│   └── likert-categories/  # For Likert scale + category scoring
+│       ├── README.md
+│       ├── index.html
+│       ├── styles.css
+│       ├── app.js
+│       └── content-schema.json
 ├── proactiveness/          # Questionnaire 1
 │   ├── index.html
 │   ├── styles.css          # Imports ../shared.css + local overrides
@@ -403,6 +411,74 @@ const typeDescription = content.types[typeId].description;
 - Analysis categories and interpretation logic
 
 **Pattern extraction:** Once we have 2-3 questionnaires, we can identify recurring patterns and decide what to generalize.
+
+---
+
+## Questionnaire Templates
+
+Reusable templates for common questionnaire patterns are stored in `_templates/`.
+
+### Available Templates
+
+| Template | Use Case | Questionnaires Using It |
+|----------|----------|------------------------|
+| `likert-categories` | Single statement + 1-5 scale + category sums | engagement-drivers, managerial-courage |
+
+### Template: likert-categories
+
+For questionnaires that:
+- Present **single statement questions** (not bipolar)
+- Use a **1-5 Likert scale** (agreement, frequency, or degree)
+- **Sum scores per category** (not count-based)
+- Identify **dominant/highest categories**
+
+**File structure:**
+```
+_templates/likert-categories/
+├── README.md           # Usage instructions
+├── index.html          # HTML template with all screen variants
+├── styles.css          # Complete styles (imports ../shared.css)
+├── app.js              # Config-driven logic
+└── content-schema.json # JSON schema for content.json
+```
+
+**Configuration via `content.json`:**
+```json
+{
+  "config": {
+    "hasAnalysisScreen": true,       // Results → Analysis flow
+    "interpretationMode": "tiered",  // "simple" or "tiered"
+    "showScaleLabelsInline": true    // Labels under scale numbers
+  }
+}
+```
+
+**Interpretation modes:**
+- `simple`: Highest category wins, optional all-low threshold handling
+- `tiered`: Low/medium/high interpretation based on score ranges (requires `category.interpretation`)
+
+**To use:**
+1. Copy `_templates/likert-categories/` to new questionnaire folder
+2. Create `content.json` following the schema
+3. Update `index.html` header and title
+4. Optionally customize `styles.css`
+5. Remove analysis screen section if `hasAnalysisScreen: false`
+
+See `_templates/likert-categories/README.md` for detailed instructions.
+
+---
+
+### When to Create a New Template
+
+Consider creating a template when:
+- **2+ questionnaires** share the same fundamental structure
+- The structure is **distinct enough** from existing templates
+- Parameterization is **straightforward** (config in content.json)
+
+**Do NOT template when:**
+- Only 1 questionnaire uses the pattern
+- The structure is unique (e.g., scenario-based, binary answers)
+- Customization would require significant code changes
 
 ---
 
