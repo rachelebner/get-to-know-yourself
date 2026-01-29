@@ -5,12 +5,26 @@ A collection of Hebrew personality questionnaires.
 ## Clone & Setup
 
 ```bash
-# Clone with submodules (HTTPS)
-git clone --recurse-submodules https://github.com/rachelebner/get-to-know-yourself.git
-
-# Or if already cloned without submodules
-git submodule update --init --recursive
+# Clone the repo
+git clone git@github.com:rachelebner/get-to-know-yourself.git
+cd get-to-know-yourself
 ```
+
+### Optional: Cursor Rules (Racheli's local setup)
+
+If you have access to the personal Cursor rules repo:
+
+```bash
+# Clone rules repo alongside this project
+git clone git@github.com:rachelebner/racheli-personal-rules.git ../racheli-personal-rules
+
+# Create symlinks (from project root)
+mkdir -p .cursor/rules
+ln -s ../../../racheli-personal-rules/.cursor/rules/racheli .cursor/rules/racheli
+ln -s ../../racheli-personal-rules/rules-src .cursor/rules-src
+```
+
+Both symlinks are gitignored, so this setup is local-only.
 
 ## Quick Start
 

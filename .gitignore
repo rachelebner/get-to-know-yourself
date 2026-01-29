@@ -1,5 +1,8 @@
 .cursor/rules/racheli/
+.cursor/rules-src
 .DS_Store
 
 # Temp upload folder (not tracked - move files to questionnaire folders)
 _inbox/
+
+.gitmodules
