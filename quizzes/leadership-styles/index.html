@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+    <title>שאלון דומייני מנהיגות</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app__header">
+        <a href="../../" class="back-link">← חזרה למרכז השאלונים</a>
+        <img src="../../logo.avif" alt="מירב ים חן" class="app__logo" />
+        <div class="app__badge" id="badge">דומייני מנהיגות</div>
+        <h1 id="header-title">שאלון דומייני מנהיגות</h1>
+        <p class="app__subtitle" id="header-subtitle">
+          גלו את סגנון המנהיגות שלכם
+        </p>
+      </header>
+
+      <main class="card" id="card">
+        <!-- Intro Screen -->
+        <section class="screen screen--active" id="intro">
+          <h2 id="intro-title">הנחיות</h2>
+          <p class="intro__text" id="intro-instructions"></p>
+          <p class="intro__note" id="intro-note"></p>
+          <div class="actions actions--center">
+            <button class="primary" id="start">התחל</button>
+            <a href="../../" class="ghost">חזרה למרכז השאלונים</a>
+          </div>
+        </section>
+
+        <!-- Question Screen -->
+        <section class="screen" id="question-screen" aria-live="polite">
+          <div class="progress">
+            <span id="progress-text">שאלה 1 מתוך 10</span>
+            <div class="progress__bar">
+              <div class="progress__fill" id="progress-fill"></div>
+            </div>
+          </div>
+          <div class="question">
+            <div class="question__text" id="question-text"></div>
+          </div>
+          <div class="options-container" id="options-container">
+            <!-- Options will be dynamically generated -->
+          </div>
+          <div class="actions actions--bottom">
+            <button class="ghost" id="prev" disabled>חזרה</button>
+            <button class="primary" id="next" disabled>הבא</button>
+          </div>
+        </section>
+
+        <!-- Results Screen -->
+        <section class="screen screen--scroll" id="results">
+          <h2 id="results-title">התוצאות שלכם</h2>
+          <p class="app__subtitle" id="results-subtitle">דומייני המנהיגות שלכם</p>
+          
+          <!-- Dominant Domain(s) -->
+          <div class="dominant-section" id="dominant-section">
+            <h3 class="section-title" id="dominant-title">הדומיין הדומיננטי שלכם</h3>
+            <div class="dominant-domains" id="dominant-domains"></div>
+          </div>
+          
+          <p class="blend-note" id="blend-note"></p>
+          
+          <!-- All Domains -->
+          <div class="all-domains-section">
+            <h3 class="section-title" id="all-domains-title">כל הדומיינים</h3>
+            <div class="all-domains" id="all-domains"></div>
+          </div>
+          
+          <p class="reflection-prompt" id="reflection-prompt"></p>
+          
+          <div class="actions results-actions">
+            <button class="ghost" id="back-to-questions">חזרה לשאלות</button>
+            <button class="ghost" id="restart">התחל מחדש</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
