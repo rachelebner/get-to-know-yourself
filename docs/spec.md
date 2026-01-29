@@ -101,12 +101,7 @@ Example: `proactiveness/README.md`
 
 ## P2 Features (Future)
 
-- [ ] Progress persistence (resume partially completed questionnaire)
-- [ ] Results storage in localStorage
-- [ ] View past results from hub
-- [ ] Shared component library extraction
-- [ ] Mobile share button (Web Share API → native share sheet)
-- [ ] RTF export format option
+- [ ] Enhanced share (multi-format copy: Markdown, Rich Text, Image + Web Share API)
 
 ---
 

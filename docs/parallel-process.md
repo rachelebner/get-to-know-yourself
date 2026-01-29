@@ -2,275 +2,197 @@
 
 ## Overview
 
-Process multiple features/tasks in parallel using git worktrees or separate branches. This document defines the general workflow pattern - specific batch plans reference this document.
-
-**Related:** See `docs/batch-plans/` for specific batch execution plans.
+Process multiple features/tasks in parallel using a queue-based approach. Tasks are spawned as slots become available (max 3 concurrent).
 
 ---
 
-## When to Use This Workflow
+## Related Workflow Rules
 
-Use parallel processing when:
-- **3+ independent tasks** need implementation
-- Tasks have **minimal file overlap** (different folders/files)
-- You want to **maximize throughput** vs sequential work
-- Tasks can be **reviewed/tested independently**
-
-Don't use when:
-- Tasks are **highly interdependent** (changes to shared files)
-- Only **1-2 small tasks** (overhead not worth it)
-- Tasks require **sequential feedback loops**
+| Rule | When to Use |
+|------|-------------|
+| `.cursor/rules/racheli/workflow/quick-ui-start.mdc` | Starting a new feature branch |
+| `_inbox/quick-ui-cleanup.mdc` | Before finishing any task |
+| `.cursor/rules-src/workflow/quick-ui-finish.md` | Completing and merging a feature |
 
 ---
 
-## Directory Structure
+## When to Use Parallel Processing
+
+**Use when:**
+- 3+ independent tasks need implementation
+- Tasks have minimal file overlap
+- Tasks can be reviewed/tested independently
+
+**Don't use when:**
+- Tasks are highly interdependent
+- Only 1-2 small tasks
+- Tasks require sequential feedback loops
+
+---
+
+## Feature Plan Input Format
+
+Before starting parallel execution, provide a feature plan in this format:
 
 ```
-project/
-├── docs/
-│   ├── parallel-process.md      # This file (general guidance)
-│   └── batch-plans/             # Specific batch execution plans
-│       └── [batch-name].md      # Individual batch plan
-├── _inbox/                      # Source documents/specs (if applicable)
-└── [feature-folders]/           # Created per task
+FEATURE PLAN: [name]
+MAX CONCURRENT: [N]
+
+TASKS:
+- [ID]: [description]
+  SCOPE: [files/folders this task can modify]
+  DEPENDS: [task IDs, or "none"]
+
+- [ID]: [description]
+  SCOPE: [files/folders]
+  DEPENDS: [task IDs, or "none"]
 ```
 
-**Worktrees (for true parallelism):**
+**Example:**
 ```
-project-[feature-name]/          # One worktree per feature
-```
+FEATURE PLAN: P2-P3 Features
+MAX CONCURRENT: 3
 
----
+TASKS:
+- F1: Create test mode library
+  SCOPE: lib/testmode.js, index.html (hub header only)
+  DEPENDS: none
 
-## Workflow Phases
+- F2: Create share library  
+  SCOPE: lib/share.js
+  DEPENDS: none
 
-### Phase 0: Planning
+- I1: Integrate features into proactiveness
+  SCOPE: proactiveness/
+  DEPENDS: F1, F2
 
-1. **Define the batch** - List all features/tasks
-2. **Analyze dependencies** - Identify shared files, execution order
-3. **Create batch plan** - Document in `docs/batch-plans/[name].md`
-4. **Determine parallelization** - How many concurrent tasks?
-
-**Deliverable:** Batch plan document with task list and dependencies
-
----
-
-### Phase 1: Setup (Sequential)
-
-1. Ensure main branch is up to date
-2. Create worktrees/branches for parallel work
-3. Set up any shared foundations (if needed)
-
-```bash
-git checkout main && git pull origin main
-git worktree add ../project-[feature-a] -b feat/[feature-a]
-git worktree add ../project-[feature-b] -b feat/[feature-b]
+- I2: Integrate features into communication-styles
+  SCOPE: communication-styles/
+  DEPENDS: F1, F2
 ```
 
-**Deliverable:** Worktrees/branches ready for parallel work
+**Rules:**
+- Tasks with `DEPENDS: none` can start immediately
+- Tasks wait until all dependencies complete
+- Two tasks cannot have overlapping SCOPE
 
 ---
 
-### Phase 2: Implementation (Parallel)
+## Queue-Based Execution
 
-For each feature (in parallel):
+```
+QUEUE: [T1] [T2] [T3] [T4] [T5] [T6] [T7]
+       ─────────────────────────────────►
 
-1. Implement the feature in its worktree/branch
-2. Self-test within the worktree
-3. Commit with clear message
-
-**Parallelization rules:**
-- Run up to N tasks concurrently (defined in batch plan)
-- When a slot opens, start next task from queue
-- Keep tasks in their designated folders to avoid conflicts
-
-**Deliverable:** Working feature per task
-
----
-
-### Phase 3: Review (Mixed)
-
-Agent self-review checklist:
-- [ ] Feature works as specified
-- [ ] No lint errors introduced
-- [ ] Mobile responsive (if UI)
-- [ ] Follows existing patterns
-
-User review (if needed):
-- Test the feature
-- Provide feedback or approve
-
-**Deliverable:** Review complete, feedback addressed
-
----
-
-### Phase 4: Testing (Parallel)
-
-For each feature:
-1. Run full test scenario
-2. Test edge cases
-3. Verify no regressions
-
-**Deliverable:** Test confirmation
-
----
-
-### Phase 5: Merge (Sequential)
-
-Merge features one at a time to avoid conflicts:
-
-```bash
-# In worktree
-git add -A
-git commit -m "feat: [description]"
-git push -u origin feat/[feature-name]
-
-# From main repo
-git checkout main
-git merge feat/[feature-name]
-git push origin main
-
-# Cleanup
-git worktree remove ../project-[feature-name]
-git branch -d feat/[feature-name]
+SLOTS (max 3):
+  [T1 running] [T2 running] [T3 running]
+       │
+       ▼ T1 completes
+  [T4 running] [T2 running] [T3 running]
 ```
 
-**Deliverable:** Features merged to main
+**Rules:**
+1. Start with up to 3 tasks
+2. When one completes, spawn next from queue
+3. Continue until queue empty
 
 ---
 
-## Parallelization Strategy
+## Task Lifecycle
 
-| Phase | Parallel? | Notes |
-|-------|-----------|-------|
-| 0. Planning | No | One-time setup |
-| 1. Setup | No | Sequential branch creation |
-| 2. Implementation | **Yes** | Main parallelization opportunity |
-| 3. Review | Mixed | Agent parallel, user serial |
-| 4. Testing | **Yes** | Can test multiple concurrently |
-| 5. Merge | No | Sequential to avoid conflicts |
+### 1. Start Task
+Follow `quick-ui-start.mdc`:
+- Create branch `ui/<feature-name>` or work in main
+- Clear scope: which files this task can modify
+
+### 2. Implement
+- Stay within file boundaries
+- Commit incrementally
+- Self-test before marking complete
+
+### 3. Cleanup
+Follow `quick-ui-cleanup.mdc`:
+- Remove redundancies
+- Update documentation
+- Verify no lint errors
+
+### 4. Complete
+Follow `quick-ui-finish.md`:
+- Push changes
+- Merge to main (sequential, one at a time)
+- Mark task done, spawn next
+
+---
+
+## File Boundaries
+
+Prevent conflicts by assigning clear file ownership:
+
+| Task Type | Owns | Can Read |
+|-----------|------|----------|
+| Foundation (lib/) | `lib/[feature].js` | Any |
+| Integration | `[questionnaire]/` folder | `lib/`, `shared.css` |
+| Hub changes | `index.html`, `styles.css` | Any |
+
+**Rule:** Two tasks should never modify the same file simultaneously.
 
 ---
 
 ## Concurrency Guidelines
 
-| Batch Size | Recommended Concurrent | Rationale |
-|------------|----------------------|-----------|
+| Queue Size | Max Concurrent | Notes |
+|------------|----------------|-------|
 | 2-3 tasks | 2 | Low overhead |
-| 4-6 tasks | 3-4 | Good balance |
-| 7-10 tasks | 4-5 | Agent context limits |
-| 10+ tasks | Split into waves | Avoid overwhelming |
+| 4-6 tasks | 3 | Good balance |
+| 7-10 tasks | 3-4 | Cap at 3 for safety |
+| 10+ tasks | 3 | Process in waves |
 
 ---
 
-## Agent Task Batching
+## Communication Pattern
 
-When working with agent, batch requests by phase:
-
-**Good:**
-- "Implement all foundation tasks (F1, F2)"
-- "Integrate feature into all 7 questionnaires"
-
-**Less efficient:**
-- "Do everything for feature A, then B, then C"
-
-**Communication pattern:**
 ```
-User: "Start Phase 2 - implement F1, F2, F3 in parallel"
-Agent: [implements all three]
-Agent: "F1, F2, F3 complete. Ready for Phase 3 review?"
+User: "Start feature queue"
+Agent: "Starting T1, T2, T3 (3 slots)"
+       [implements T1, T2, T3]
+Agent: "T1 complete. Starting T4."
+       "T2 complete. Starting T5."
+       [continues until queue empty]
+Agent: "All tasks complete. Ready to merge?"
 ```
 
 ---
 
-## Handoff Points
+## Feature Specifications
 
-Clear handoffs between user and agent:
+Store lightweight specs in `docs/features/`:
 
-| Step | Owner | Handoff Signal |
-|------|-------|----------------|
-| Define batch | User | "Batch plan ready in docs/batch-plans/X.md" |
-| Approve plan | User | "Plan approved, start Phase 1" |
-| Review implementation | User | "Approved" or "Issues: ..." |
-| Final approval | User | "Merge it" |
-
----
-
-## Status Tracking Template
-
-Copy this to your batch plan:
-
-```markdown
-## Status
-
-| Task | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Phase 5 |
-|------|---------|---------|---------|---------|---------|
-| task-a | [ ] | [ ] | [ ] | [ ] | [ ] |
-| task-b | [ ] | [ ] | [ ] | [ ] | [ ] |
-
-**Last updated:** [DATE]
-**Notes:** [Current status]
+```
+docs/features/
+└── [feature-id]-[name].md
 ```
 
+Each file: brief description, UI notes, implementation hints.
+
 ---
 
-## Quick Commands Reference
+## Quick Reference
 
 ```bash
-# List all worktrees
-git worktree list
+# Create feature branch
+git checkout -b ui/<feature-name>
 
-# Create new worktree
-git worktree add ../project-[name] -b feat/[name]
+# Merge after completion
+git checkout main && git merge ui/<feature-name>
 
-# Switch to worktree
-cd ../project-[name]
-
-# Check branch status
-git status
-
-# Remove worktree after merge
-git worktree remove ../project-[name]
-git branch -d feat/[name]
-```
-
----
-
-## Batch Plan Template
-
-Create new batch plans in `docs/batch-plans/[name].md`:
-
-```markdown
-# [Batch Name] - Parallel Execution Plan
-
-**Batch ID:** [unique-id]
-**Created:** [date]
-**Status:** Planning | In Progress | Complete
-
-## Overview
-[What this batch accomplishes]
-
-## Tasks
-
-| ID | Task | Description | Dependencies |
-|----|------|-------------|--------------|
-| T1 | ... | ... | None |
-| T2 | ... | ... | T1 |
-
-## Execution Strategy
-- **Max concurrent:** [N]
-- **Estimated phases:** [N rounds]
-
-## Phase Breakdown
-[Details per phase]
-
-## Status Tracking
-[Use template from parallel-process.md]
+# Cleanup branch
+git branch -d ui/<feature-name>
 ```
 
 ---
 
 ## See Also
 
-- `docs/batch-plans/` - Specific batch execution plans
-- `docs/questionnaire-patterns.md` - Questionnaire-specific patterns
+- `docs/features/` — Individual feature specifications
+- `docs/questionnaire-patterns.md` — Questionnaire-specific patterns
+- `docs/qa-review-checklist.md` — QA review checklist

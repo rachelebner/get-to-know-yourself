@@ -138,3 +138,29 @@ Start learnning about cursor commands/skills, in addition to rules.
 - Screenshot feedback from user was essential for visual bug fixes
 - Quick iteration cycle worked well for style refinements
 
+---
+
+## Session: 2026-01-29 - Templates & Parallel Process
+
+### What We Did
+- Analyzed all 7 questionnaires for structural patterns
+- Created `_templates/likert-categories/` template for Likert+category questionnaires
+- Generalized `parallel-process.md` to work for any feature batch (not just questionnaires)
+- Created `docs/batch-plans/` folder for specific batch execution plans
+- Created `docs/questionnaire-patterns.md` with structure analysis guidelines
+- Added `parallel-features.mdc` cursor rule for running parallel batches
+
+### Decisions Made
+- **Don't refactor existing questionnaires to use template** - Template is for NEW questionnaires only. Existing ones work fine, retrofitting has risk with no user benefit.
+- **Template vs custom** - Only template when 2+ questionnaires share exact structure. Most questionnaires are unique enough to warrant custom implementation.
+- **Separation of concerns** - `parallel-process.md` defines HOW (general workflow), `batch-plans/*.md` defines WHAT (specific batches)
+
+### Workflow Observations
+- Starting with structure analysis before jumping to solutions helped identify which questionnaires could share templates
+- The ROI analysis (cost vs benefit of refactoring) was valuable - prevented unnecessary work
+- Having clear criteria for "when to template" avoids over-engineering
+
+### Rule Candidates
+- Template decision criteria could be extracted to a general rule for any project
+- The "analyze before refactor" pattern is useful beyond questionnaires
+
