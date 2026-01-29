@@ -1,417 +1,85 @@
-# Technical Design
+# Technical Design: Parallel Questionnaire Processing
 
 ## Stack
-
-- **HTML5** - Semantic markup with RTL support (`<html lang="he" dir="rtl">`)
-- **CSS3** - Custom properties for theming, Flexbox/Grid for layouts
-- **Vanilla JavaScript** - No frameworks, ES6+ features
-- **No build tools** - Files served directly
-
----
+- Vanilla JavaScript (consistent with existing questionnaires)
+- HTML/CSS
+- localStorage for state persistence
 
 ## Architecture
 
-```
-/
-├── index.html              # Hub page (questionnaire directory)
-├── styles.css              # Hub-only styles
-├── shared.css              # Minimal shared styles (tokens + buttons)
-├── docs/
-│   ├── spec.md
-│   ├── design.md
-│   └── retro.md            # Retrospective, workflow insights, session logs
-├── proactiveness/          # Questionnaire 1
-│   ├── index.html
-│   ├── styles.css          # Imports ../shared.css + local overrides
-│   ├── app.js
-│   └── README.md           # Documents this questionnaire's specific structure
-└── [future-questionnaire]/ # Same structure
-    ├── index.html
-    ├── styles.css
-    ├── app.js
-    └── README.md
-```
+### Current State
+Each questionnaire is a standalone app:
+- `communication-styles/` - independent app with own app.js, content.json
+- `proactiveness/` - independent app with own app.js, content.json  
+- `situational-leadership/` - independent app with own app.js, content.json
 
-### Design Decision: Minimal Shared Styles
+### Proposed Approaches
 
-**Approach:** Single `shared.css` at root with design tokens and button styles only.
+#### Option A: Hub-Level Orchestrator
+Create a new parallel mode in the hub (root index.html) that:
+- Loads content.json from multiple questionnaires
+- Manages a unified question queue
+- Delegates scoring to questionnaire-specific logic
+- Renders unified progress UI
 
-**What goes in `shared.css` (keep it lean!):**
-- CSS custom properties (colors, radii, shadows, fonts)
-- Base reset (`box-sizing`, font-family)
-- Button styles (`.primary`, `.ghost`)
+**Pros:** Clean separation, questionnaires remain independent
+**Cons:** Duplicates some rendering logic
 
-**What stays local in each `styles.css`:**
-- Layout (screens, grids, cards)
-- Component-specific styles (progress bar, scale inputs, results)
-- Any questionnaire-unique styling
+#### Option B: Shared App Framework
+Extract common questionnaire logic into shared module:
+- Generic question renderer
+- State management
+- Scoring engine interface
 
-**Usage in questionnaire CSS:**
-```css
-@import url("../shared.css");
+**Pros:** DRY, easier to add new questionnaires
+**Cons:** Requires refactoring existing questionnaires
 
-/* Local styles below */
-```
+#### Option C: iframe-based Switching
+Keep questionnaires as-is, orchestrate at hub level via iframes:
+- Each questionnaire in hidden iframe
+- Hub controls which is visible
+- Message passing for progress sync
 
-**Rationale:**
-- Single source of truth for brand colors and button look
-- Questionnaires remain mostly independent
-- No build step required
-- Easy to override locally if needed
+**Pros:** Zero changes to existing code
+**Cons:** Clunky, state sync complexity
 
----
+## Key Components (TBD)
 
-## Design Tokens
+### QuestionnaireOrchestrator
+- Manages active questionnaires
+- Controls question ordering
+- Tracks per-questionnaire state
 
-Defined once in `shared.css`, used everywhere:
+### UnifiedProgressTracker
+- Visual progress for all active questionnaires
+- Overall completion percentage
 
-```css
-:root {
-  /* Colors */
-  --bg: #f4f6fb;
-  --card: #ffffff;
-  --primary: #4c66ff;
-  --primary-dark: #3947c6;
-  --text: #1f2430;
-  --muted: #6f7a8a;
-  --border: #e3e7f0;
-  
-  /* Shadows */
-  --shadow: 0 20px 50px rgba(21, 31, 55, 0.08);
-  --shadow-primary: 0 12px 20px rgba(76, 102, 255, 0.25);
-  
-  /* Spacing */
-  --radius-sm: 16px;
-  --radius-md: 18px;
-  --radius-lg: 24px;
-  --radius-pill: 999px;
-  
-  /* Typography */
-  --font-stack: "Heebo", "Assistant", "Segoe UI", sans-serif;
-}
-```
+### ResultsAggregator
+- Collects results from completed questionnaires
+- Optional: cross-questionnaire insights
 
----
+## Data Model
 
-## Key Components
-
-### 1. Hub Components
-
-#### Hub Header
-- Banner with site title "מרכז השאלונים - מירב ים חן"
-- Logo placeholder (image slot)
-- Optional subtitle
-
-```html
-<header class="hub-header">
-  <div class="hub-header__logo"><!-- logo placeholder --></div>
-  <h1 class="hub-header__title">מרכז השאלונים</h1>
-  <p class="hub-header__subtitle">מירב ים חן</p>
-</header>
-```
-
-#### Questionnaire Card
-Grid item linking to a questionnaire.
-
-```html
-<article class="questionnaire-card">
-  <h2 class="questionnaire-card__title">מנוף הפרואקטיביות</h2>
-  <p class="questionnaire-card__description">
-    אבחון עצמי של מנופי הפרואקטיביות שלך...
-  </p>
-  <div class="questionnaire-card__meta">
-    <span class="questionnaire-card__time">כ-5 דקות</span>
-  </div>
-  <a href="./proactiveness/" class="questionnaire-card__cta primary">התחל</a>
-</article>
-```
-
-#### Questionnaire Grid
-Responsive grid container.
-
-```css
-.questionnaire-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-}
-
-@media (max-width: 640px) {
-  .questionnaire-grid {
-    grid-template-columns: 1fr;
+### Session State
+```javascript
+{
+  activeQuestionnaires: ['communication-styles', 'proactiveness'],
+  currentQuestion: { questionnaire: 'communication-styles', index: 3 },
+  progress: {
+    'communication-styles': { answered: 3, total: 10 },
+    'proactiveness': { answered: 1, total: 8 }
+  },
+  answers: {
+    'communication-styles': [...],
+    'proactiveness': [...]
   }
 }
 ```
 
----
-
-### 2. Questionnaire Components
-
-These patterns appear in every questionnaire. Defined locally in each `styles.css`.
-
-#### Screen Container & Transitions
-Single-page app with multiple screens, one active at a time.
-
-```css
-.screen {
-  opacity: 0;
-  transform: translateY(16px);
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.screen--active {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-```
-
-#### Progress Bar
-Shows completion progress during questions.
-
-```html
-<div class="progress">
-  <span id="progress-text">שאלה 1 מתוך 18</span>
-  <div class="progress__bar">
-    <div class="progress__fill" id="progress-fill"></div>
-  </div>
-</div>
-```
-
-```css
-.progress__bar {
-  width: 100%;
-  height: 10px;
-  background: #edf0f7;
-  border-radius: var(--radius-pill);
-}
-
-.progress__fill {
-  height: 100%;
-  width: 0;
-  background: linear-gradient(90deg, var(--primary), #8b9bff);
-  transition: width 0.3s ease;
-}
-```
-
-#### Scale Input (1-5)
-Radio buttons styled as selectable pills.
-
-```html
-<div class="scale">
-  <label class="scale__item">
-    <input type="radio" name="score" value="1" />
-    <span>1</span>
-  </label>
-  <!-- ... 2, 3, 4, 5 ... -->
-</div>
-```
-
-```css
-.scale {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-}
-
-.scale__item {
-  background: #f8f9fd;
-  border-radius: var(--radius-sm);
-  padding: 14px 0;
-  text-align: center;
-  cursor: pointer;
-}
-
-.scale__item:has(input:checked) {
-  background: var(--primary);
-  color: white;
-  box-shadow: var(--shadow-primary);
-}
-```
-
-#### Buttons (in `shared.css`)
-Two variants: primary (filled) and ghost (outlined). Defined in shared styles.
-
-```css
-.primary, .ghost {
-  padding: 12px 24px;
-  border-radius: var(--radius-pill);
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.primary {
-  background: var(--primary);
-  color: white;
-}
-
-.primary:hover {
-  background: var(--primary-dark);
-}
-
-.ghost {
-  background: transparent;
-  color: var(--primary);
-  border: 1px solid var(--border);
-}
-```
-
-#### Card Container
-Main content wrapper with shadow and rounded corners.
-
-```css
-.card {
-  background: var(--card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-  padding: 32px;
-}
-```
-
----
-
-### 3. Back to Hub Navigation
-
-Every questionnaire needs a link back to the hub.
-
-**Option A: In header**
-```html
-<header class="app__header">
-  <a href="../" class="back-link">← חזרה למרכז השאלונים</a>
-  <!-- ... rest of header -->
-</header>
-```
-
-**Option B: In final screen**
-```html
-<div class="actions">
-  <a href="../" class="ghost">חזרה למרכז השאלונים</a>
-  <!-- ... other actions -->
-</div>
-```
-
-**Recommendation:** Option A (always visible) for better UX.
-
----
-
-## Data Model & Questionnaire Structure
-
-**Each questionnaire may have its own unique structure.**
-
-Question types, scoring logic, analysis patterns, and result formats vary by questionnaire. Document these in a local `README.md` within each questionnaire folder.
-
-See `proactiveness/README.md` for the first example.
-
-### Content Separation: Hebrew Text in JSON
-
-**All Hebrew content must be stored separately from JavaScript logic.**
-
-Each questionnaire folder contains:
-```
-questionnaire-name/
-├── index.html
-├── styles.css
-├── app.js          # Logic only - no Hebrew strings
-└── content.json    # All Hebrew text (questions, insights, descriptions)
-```
-
-**What goes in `content.json`:**
-- Questions (text, options)
-- Category/type titles and descriptions
-- Analysis text and interpretations
-- Insight content and recommendations
-- UI labels (button text, screen titles) - optional
-
-**What stays in `app.js`:**
-- Scoring logic and algorithms
-- Screen navigation
-- DOM manipulation
-- Event handlers
-- Category/type configuration (IDs, question mappings)
-
-**Loading pattern:**
-```javascript
-// At app initialization
-const content = await fetch('./content.json').then(r => r.json());
-
-// Usage
-const questionText = content.questions[currentIndex].text;
-const typeDescription = content.types[typeId].description;
-```
-
-**Rationale:**
-- Content editors can modify Hebrew text without touching code
-- Cleaner separation of concerns
-- Easier to review/proofread content
-- Future-proofs for potential localization
-
-### What's Likely Shared
-
-- Basic screen flow (intro → questions → results)
-- Progress indication during questions
-- Copy results to clipboard feature
-- In-memory state management (no localStorage yet)
-
-### What May Vary
-
-- Question format (bipolar scale, multiple choice, open text, etc.)
-- Scoring algorithm
-- Number and type of result screens
-- Analysis categories and interpretation logic
-
-**Pattern extraction:** Once we have 2-3 questionnaires, we can identify recurring patterns and decide what to generalize.
-
----
-
-## Responsive Breakpoints
-
-| Breakpoint | Target | Adjustments |
-|------------|--------|-------------|
-| > 640px | Desktop/Tablet | Full layout, 2-3 column grids |
-| ≤ 640px | Mobile | Single column, stacked actions, smaller padding |
-
-Mobile-first approach: base styles are mobile, media queries add desktop enhancements.
-
----
-
 ## External Dependencies
+- None (pure frontend)
 
-None. All functionality is vanilla HTML/CSS/JS.
-
-Google Fonts loaded via CSS `@import` or `<link>`:
-```html
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap" rel="stylesheet">
-```
-
----
-
-## File Naming Conventions
-
-| Type | Convention | Example |
-|------|------------|---------|
-| Questionnaire folder | kebab-case, descriptive | `proactiveness`, `strengths-finder` |
-| HTML files | Always `index.html` | — |
-| CSS files | Always `styles.css` | — |
-| JS files | Always `app.js` | — |
-
----
-
-## Implementation Order
-
-1. **Create `shared.css`** with tokens + buttons extracted from proactiveness
-2. **Update proactiveness** to import `shared.css`, remove duplicated token/button styles
-3. **Build hub page** (`index.html`, `styles.css`) importing `shared.css`
-4. **Add back-to-hub link** to proactiveness questionnaire
-5. **Test on mobile** and adjust responsive behavior
-
----
-
-## See Also
-
-- `docs/spec.md` - Product requirements, features, hub/questionnaire specs
-- `proactiveness/README.md` - First questionnaire's specific data model and patterns
+## Decisions Needed
+1. Which architectural approach?
+2. Interleaving strategy: round-robin vs random vs themed groups?
+3. Where to store combined session state?
