@@ -129,6 +129,7 @@ Example: `quizzes/proactiveness/README.md`
 | שלושת מעגלי המנהיגות | `/quizzes/leadership-circles` | ✅ Complete |
 | מודל אומץ | `/quizzes/managerial-courage` | ✅ Complete |
 | אסרטיביות | `/quizzes/assertiveness` | ✅ Complete |
+| דומייני מנהיגות | `/quizzes/leadership-styles` | ✅ Complete |
 
 ---
 

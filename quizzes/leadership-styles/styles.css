@@ -47,7 +47,7 @@
   border-radius: 24px;
   box-shadow: var(--shadow);
   padding: 32px;
-  min-height: calc(100vh - 220px);
+  min-height: calc(100dvh - 220px);
   position: relative;
   overflow: hidden;
 }
@@ -59,8 +59,13 @@
   position: absolute;
   inset: 0;
   padding: 32px 32px 48px;
-  overflow: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
   transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.screen::-webkit-scrollbar {
+  display: none;
 }
 
 .screen--active {
@@ -339,50 +344,54 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 640px) {
+  .app {
+    padding: 24px 16px 40px;
+  }
+
   .app__logo {
     width: 44px;
     height: 44px;
     border-radius: 10px;
   }
 
-  .card,
-  .screen {
-    padding: 20px 20px 32px;
+  .card {
+    padding: 20px;
+    min-height: calc(100dvh - 120px);
   }
 
-  .card {
-    min-height: calc(100vh - 140px);
+  .screen {
+    padding: 20px 20px 24px;
   }
 
   .progress {
-    margin-bottom: 16px;
-  }
-
-  .question {
     margin-bottom: 12px;
   }
 
+  .question {
+    margin-bottom: 10px;
+  }
+
   .question__text {
-    font-size: 16px;
-    padding: 16px;
+    font-size: 15px;
+    padding: 14px;
   }
 
   .options-container {
-    gap: 10px;
+    gap: 8px;
   }
 
   .option-btn {
-    padding: 14px 16px;
-    font-size: 15px;
+    padding: 12px 14px;
+    font-size: 14px;
   }
 
   .domain-card {
-    padding: 16px;
+    padding: 14px;
   }
 
   .domain-card__header {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   .domain-card__score {
@@ -390,28 +399,45 @@
   }
 
   .domain-card__title {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .domain-card__summary {
-    font-size: 15px;
-  }
-
-  .domain-card__section {
-    padding: 12px;
-  }
-
-  .domain-card__list {
     font-size: 14px;
   }
 
+  .domain-card__section {
+    padding: 10px;
+  }
+
+  .domain-card__list {
+    font-size: 13px;
+  }
+
   .section-title {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .blend-note,
   .reflection-prompt {
-    font-size: 14px;
-    padding: 14px;
+    font-size: 13px;
+    padding: 12px;
+  }
+}
+
+/* Low height screens */
+@media (max-height: 700px) {
+  .app {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .card {
+    min-height: calc(100dvh - 100px);
+  }
+
+  .screen {
+    padding-top: 16px;
+    padding-bottom: 16px;
   }
 }

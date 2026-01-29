@@ -47,7 +47,7 @@
   border-radius: 24px;
   box-shadow: var(--shadow);
   padding: 32px;
-  min-height: calc(100vh - 220px);
+  min-height: calc(100dvh - 220px);
   position: relative;
   overflow: hidden;
 }
@@ -59,8 +59,13 @@
   position: absolute;
   inset: 0;
   padding: 32px 32px 48px;
-  overflow: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
   transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.screen::-webkit-scrollbar {
+  display: none;
 }
 
 .screen--active {
@@ -418,86 +423,99 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 640px) {
+  .app {
+    padding: 24px 16px 40px;
+  }
+
   .app__logo {
     width: 44px;
     height: 44px;
     border-radius: 10px;
   }
 
-  .card,
-  .screen {
-    padding: 20px 20px 32px;
+  .card {
+    padding: 20px;
+    min-height: calc(100dvh - 120px);
   }
 
-  .card {
-    min-height: calc(100vh - 140px);
+  .screen {
+    padding: 20px 20px 24px;
   }
 
   .progress {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .question {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .question__text {
-    font-size: 16px;
-    padding: 16px;
+    font-size: 15px;
+    padding: 14px;
   }
 
   .answer-buttons {
-    gap: 12px;
+    gap: 10px;
   }
 
   .answer-btn {
-    padding: 16px;
-    font-size: 18px;
+    padding: 14px;
+    font-size: 16px;
   }
 
   .chart {
-    height: 160px;
-    gap: 12px;
+    height: 140px;
+    gap: 10px;
   }
 
   .chart__fill {
-    max-width: 48px;
+    max-width: 44px;
   }
 
   .chart__score {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .chart__labels {
-    font-size: 12px;
-    gap: 12px;
+    font-size: 11px;
+    gap: 10px;
   }
 
   .type-card {
-    padding: 16px;
+    padding: 14px;
   }
 
   .type-card__title {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .type-card__score {
-    font-size: 22px;
+    font-size: 18px;
   }
 
   .minor-types {
     grid-template-columns: 1fr;
   }
 
-  .type-card__title {
-    font-size: 18px;
-  }
-
-  .type-card__score {
-    font-size: 20px;
-  }
-
   .type-card__traits {
-    font-size: 14px;
+    font-size: 13px;
+  }
+}
+
+/* Low height screens */
+@media (max-height: 700px) {
+  .app {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .card {
+    min-height: calc(100dvh - 100px);
+  }
+
+  .screen {
+    padding-top: 16px;
+    padding-bottom: 16px;
   }
 }

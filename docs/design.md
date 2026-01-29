@@ -161,13 +161,24 @@ These patterns appear in every questionnaire. Defined locally in each `styles.cs
 Single-page app with multiple screens, one active at a time.
 
 ```css
+.card {
+  min-height: calc(100dvh - 220px);  /* Dynamic viewport height for mobile */
+  overflow: hidden;
+}
+
 .screen {
   opacity: 0;
   transform: translateY(16px);
   pointer-events: none;
   position: absolute;
   inset: 0;
+  overflow-y: auto;              /* Allow scrolling when needed */
+  scrollbar-width: none;          /* Hide scrollbar (Firefox) */
   transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.screen::-webkit-scrollbar {
+  display: none;                  /* Hide scrollbar (Chrome/Edge) */
 }
 
 .screen--active {
@@ -176,6 +187,8 @@ Single-page app with multiple screens, one active at a time.
   pointer-events: auto;
 }
 ```
+
+**Viewport handling:** Uses `100dvh` (dynamic viewport height) instead of `100vh` for correct mobile browser behavior. Screens scroll internally with invisible scrollbars when content overflows.
 
 #### Progress Bar
 Shows completion progress during questions.
@@ -399,6 +412,7 @@ quizzes/engagement-drivers/מנועי המחוברות קווין קרוז שא�
 quizzes/leadership-circles/שאלון אבחון עצמי 3 מעגלי המנהיגות והניהול.docx
 quizzes/managerial-courage/שאלון אומץ (קליין וקליין).pdf
 quizzes/assertiveness/שאלון אסרטיביות.rtf
+quizzes/leadership-styles/quiz-text.md
 ```
 
 **Rationale:**
@@ -544,8 +558,11 @@ Consider creating a template when:
 |------------|--------|-------------|
 | > 640px | Desktop/Tablet | Full layout, 2-3 column grids |
 | ≤ 640px | Mobile | Single column, stacked actions, smaller padding |
+| height ≤ 700px | Low-height screens | Reduced padding, tighter spacing |
 
 Mobile-first approach: base styles are mobile, media queries add desktop enhancements.
+
+**Note:** Low-height breakpoint handles small laptops (1366×768), landscape phones, and tablets.
 
 ---
 

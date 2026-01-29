@@ -47,7 +47,7 @@
   border-radius: 24px;
   box-shadow: var(--shadow);
   padding: 32px;
-  min-height: calc(100vh - 220px);
+  min-height: calc(100dvh - 220px);
   position: relative;
   overflow: hidden;
 }
@@ -59,8 +59,13 @@
   position: absolute;
   inset: 0;
   padding: 32px 32px 48px;
-  overflow: hidden;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox - just in case */
   transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.screen::-webkit-scrollbar {
+  display: none; /* Chrome/Edge/Safari - invisible scrollbar */
 }
 
 .screen--active {
@@ -332,63 +337,132 @@
   color: var(--primary-dark);
 }
 
+/* Small screens (phones and small tablets) */
 @media (max-width: 640px) {
+  .app {
+    padding: 24px 16px 40px;
+  }
+
+  .app__header {
+    margin-bottom: 20px;
+  }
+
   .app__logo {
     width: 44px;
     height: 44px;
     border-radius: 10px;
   }
 
-  .card,
-  .screen {
-    padding: 20px 20px 32px;
+  .card {
+    padding: 20px;
+    min-height: calc(100dvh - 120px);
+    border-radius: 20px;
   }
 
-  .card {
-    min-height: calc(100vh - 140px);
+  .screen {
+    padding: 20px 20px 24px;
   }
 
   .progress {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .question {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .question__pair {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 10px;
   }
 
   .statement {
-    font-size: 14px;
-    padding: 12px;
+    font-size: 13px;
+    padding: 10px;
+    min-height: auto;
+    border-radius: 12px;
   }
 
   .question__hint {
-    font-size: 12px;
-  }
-
-  .scale {
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-
-  .scale__item {
-    padding: 10px 0;
+    font-size: 11px;
   }
 
   .scale {
     grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 12px;
   }
 
-  .question__pair {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .scale__item {
+    padding: 8px 0;
+    border-radius: 12px;
+  }
+
+  .scale__item span {
+    font-size: 16px;
+  }
+}
+
+/* Very small screens (small phones, low-res) */
+@media (max-width: 380px) {
+  .app {
+    padding: 16px 12px 32px;
+  }
+
+  .card {
+    padding: 16px;
+    min-height: calc(100dvh - 100px);
+    border-radius: 16px;
+  }
+
+  .screen {
+    padding: 16px 16px 20px;
   }
 
   .statement {
-    min-height: auto;
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .scale__item {
+    padding: 6px 0;
+  }
+
+  .scale__item span {
+    font-size: 14px;
+  }
+}
+
+/* Low height screens (landscape phones, small laptops) */
+@media (max-height: 700px) {
+  .app {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  .app__header {
+    margin-bottom: 16px;
+  }
+
+  .card {
+    min-height: calc(100dvh - 140px);
+  }
+
+  .screen {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .progress {
+    margin-bottom: 12px;
+  }
+
+  .question {
+    margin-bottom: 12px;
+  }
+
+  .scale {
+    margin-bottom: 12px;
   }
 }
 
