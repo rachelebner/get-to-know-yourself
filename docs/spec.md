@@ -15,7 +15,9 @@ A vanilla HTML/CSS/JS hub for personality questionnaires. Each questionnaire is 
 /
 ├── index.html              # Hub page - questionnaire directory
 ├── styles.css              # Hub styles
-├── shared.css              # Minimal shared styles (tokens + buttons)
+├── shared.css              # Shared styles (tokens, buttons, badges, actions)
+├── favicon.svg             # Site favicon (blue question mark)
+├── logo.avif               # Site logo
 ├── lib/                    # Shared JavaScript utilities
 │   ├── testmode.js         # Test mode detection and UI
 │   └── share.js            # Multi-format copy/share utilities
@@ -33,7 +35,7 @@ A vanilla HTML/CSS/JS hub for personality questionnaires. Each questionnaire is 
 
 ### Design Principles
 
-- **Minimal shared styles** - `shared.css` contains only design tokens and buttons
+- **Shared styles** - `shared.css` contains design tokens, buttons, header badges, and action button layouts
 - **Mostly self-contained** - each questionnaire has its own layout/component CSS
 - No build tools, no frameworks - vanilla everything
 - Mobile-ready by default

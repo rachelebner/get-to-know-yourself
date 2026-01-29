@@ -200,3 +200,33 @@ Start learnning about cursor commands/skills, in addition to rules.
 - Checklist item: verify script tags have `type="module"` when using ES imports
 - Pattern: URL param persistence for cross-page state (cleaner than localStorage for testing features)
 
+---
+
+## Session: 2026-01-29 - Quality Round & CSS Consolidation
+
+### What We Did
+- Extracted `.app__badge` from all 7 questionnaires to `shared.css`
+- Added `.badge-row` flex container for badge + test-mode alignment
+- Redesigned test mode indicator: orange gradient, smaller, 🧪 emoji
+- Extracted `.actions` and `.results-actions` styles to `shared.css` (~350 lines removed)
+- Added `favicon.svg` (blue gradient + white question mark)
+- Updated all HTML files to include favicon link
+
+### Decisions Made
+- **Badge row pattern** - When test mode is active, JS wraps badge in `.badge-row` and adds indicator
+- **Test mode indicator style** - Orange (warning color) to differentiate from app badge, smaller size
+- **Actions in shared.css** - Common pattern across all questionnaires; situational-leadership keeps local overrides
+- **SVG favicon** - Modern, scalable, matches primary brand color
+
+### Code Quality Improvements
+- Removed ~350 lines of duplicate CSS across questionnaire files
+- Centralized badge and action styles for easier future changes
+- Consistent spacing and alignment across all questionnaires
+
+### Files Changed
+- `shared.css` - Added badges, test-mode-indicator, actions sections
+- `lib/testmode.js` - Uses CSS class instead of inline styles
+- `favicon.svg` - New file
+- All `*/index.html` - Added favicon link
+- All `*/styles.css` - Removed duplicate badge/actions styles
+

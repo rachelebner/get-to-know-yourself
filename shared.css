@@ -84,3 +84,108 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Header Badge & Test Mode Indicator
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.app__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  background: rgba(76, 102, 255, 0.12);
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.test-mode-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.35);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.test-mode-indicator::before {
+  content: '🧪';
+  font-size: 11px;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+}
+
+@keyframes testModePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Actions / Button Groups
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.actions--bottom {
+  margin-top: auto;
+}
+
+.actions--center {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.results-actions {
+  justify-content: stretch;
+  align-items: center;
+}
+
+.results-actions .primary,
+.results-actions .ghost {
+  flex: 1;
+  text-align: center;
+}
+
+/* Mobile adjustments for actions */
+@media (max-width: 640px) {
+  .actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .results-actions {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .results-actions .primary,
+  .results-actions .ghost {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}

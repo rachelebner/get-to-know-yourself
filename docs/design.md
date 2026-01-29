@@ -15,7 +15,9 @@
 /
 ├── index.html              # Hub page (questionnaire directory)
 ├── styles.css              # Hub-only styles
-├── shared.css              # Minimal shared styles (tokens + buttons)
+├── shared.css              # Shared styles (tokens, buttons, badges, actions)
+├── favicon.svg             # Site favicon (blue gradient + question mark)
+├── logo.avif               # Site logo
 ├── lib/                    # Shared JavaScript utilities
 │   ├── testmode.js         # Test mode detection, toggle, indicator
 │   └── share.js            # Multi-format copy/share utilities
@@ -35,14 +37,16 @@
     └── *.pdf / *.docx      # Source document(s) - original questionnaire file
 ```
 
-### Design Decision: Minimal Shared Styles
+### Design Decision: Shared Styles
 
-**Approach:** Single `shared.css` at root with design tokens and button styles only.
+**Approach:** Single `shared.css` at root with common UI patterns.
 
-**What goes in `shared.css` (keep it lean!):**
+**What goes in `shared.css`:**
 - CSS custom properties (colors, radii, shadows, fonts)
 - Base reset (`box-sizing`, font-family)
 - Button styles (`.primary`, `.ghost`)
+- Header badges (`.app__badge`, `.test-mode-indicator`, `.badge-row`)
+- Action button groups (`.actions`, `.results-actions` + mobile responsive)
 
 **What stays local in each `styles.css`:**
 - Layout (screens, grids, cards)
@@ -261,6 +265,66 @@ Two variants: primary (filled) and ghost (outlined). Defined in shared styles.
   background: transparent;
   color: var(--primary);
   border: 1px solid var(--border);
+}
+```
+
+#### Header Badge Row (in `shared.css`)
+Displays questionnaire name badge and optional test mode indicator side-by-side.
+
+```css
+.badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.app__badge {
+  background: rgba(76, 102, 255, 0.12);
+  color: var(--primary);
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.test-mode-indicator {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  /* 🧪 emoji added via ::before pseudo-element */
+}
+```
+
+#### Action Button Groups (in `shared.css`)
+Flex container for buttons on results screens. Mobile-responsive.
+
+```css
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.results-actions {
+  justify-content: stretch;
+  align-items: center;
+}
+
+.results-actions .primary,
+.results-actions .ghost {
+  flex: 1;
+  text-align: center;
+}
+
+/* Mobile: stack actions, keep results-actions horizontal */
+@media (max-width: 640px) {
+  .actions { flex-direction: column; }
+  .results-actions { flex-direction: row; flex-wrap: nowrap; }
 }
 ```
 

@@ -37,18 +37,6 @@
   margin-bottom: 32px;
 }
 
-.app__badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(76, 102, 255, 0.12);
-  color: var(--primary);
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
 .app__subtitle {
   color: var(--muted);
   margin: 0;
@@ -210,36 +198,6 @@
   color: white;
   border-color: #d32f2f;
   box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   Actions
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-.actions {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.actions--bottom {
-  margin-top: auto;
-}
-
-.actions--center {
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.results-actions {
-  justify-content: stretch;
-  align-items: center;
-}
-
-.results-actions .primary,
-.results-actions .ghost {
-  flex: 1;
-  text-align: center;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -525,24 +483,6 @@
 
   .type-card__score {
     font-size: 22px;
-  }
-
-  .actions {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .results-actions {
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 8px;
-  }
-
-  .results-actions .primary,
-  .results-actions .ghost {
-    flex: 1;
-    padding: 10px 12px;
-    font-size: 13px;
   }
 
   .minor-types {
