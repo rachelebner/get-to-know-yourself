@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <title>שאלון אסרטיביות</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app__header">
+        <a href="../" class="back-link">← חזרה למרכז השאלונים</a>
+        <img src="../logo.avif" alt="מירב ים חן" class="app__logo" />
+        <div class="app__badge">שאלון אסרטיביות</div>
+        <h1>בדוק את רמת התקיפות שלך</h1>
+        <p class="app__subtitle">
+          עונים על כל שאלה לפי הסקאלה 1-5, ומתקדמים שלב אחר שלב.
+        </p>
+      </header>
+
+      <main class="card" id="card">
+        <section class="screen screen--active" id="intro">
+          <h2>הנחיות קצרות</h2>
+          <ul class="steps">
+            <li>לפניך 20 שאלות על התנהגויות בסיטואציות בינאישיות.</li>
+            <li>סמנו 1-5 לפי התדירות שבה ההתנהגות מאפיינת אתכם.</li>
+            <li>1 = אף פעם, 5 = תמיד.</li>
+            <li>אין תשובות נכונות או לא נכונות — ענו בכנות.</li>
+          </ul>
+          <div class="scale-legend">
+            <div class="scale-legend__item"><span>1</span> אף פעם</div>
+            <div class="scale-legend__item"><span>2</span> לעיתים רחוקות</div>
+            <div class="scale-legend__item"><span>3</span> לעיתים</div>
+            <div class="scale-legend__item"><span>4</span> לעיתים קרובות</div>
+            <div class="scale-legend__item"><span>5</span> תמיד</div>
+          </div>
+          <div class="actions actions--center">
+            <button class="primary" id="start">מתחילים</button>
+            <a href="../" class="ghost">חזרה למרכז השאלונים</a>
+          </div>
+        </section>
+
+        <section class="screen" id="question-screen" aria-live="polite">
+          <div class="progress">
+            <span id="progress-text">שאלה 1 מתוך 20</span>
+            <div class="progress__bar">
+              <div class="progress__fill" id="progress-fill"></div>
+            </div>
+          </div>
+          <div class="question">
+            <div class="question__text" id="question-text"></div>
+          </div>
+          <div class="scale">
+            <label class="scale__item">
+              <input type="radio" name="score" value="1" />
+              <span>1</span>
+              <small>אף פעם</small>
+            </label>
+            <label class="scale__item">
+              <input type="radio" name="score" value="2" />
+              <span>2</span>
+              <small>לעיתים רחוקות</small>
+            </label>
+            <label class="scale__item">
+              <input type="radio" name="score" value="3" />
+              <span>3</span>
+              <small>לעיתים</small>
+            </label>
+            <label class="scale__item">
+              <input type="radio" name="score" value="4" />
+              <span>4</span>
+              <small>לעיתים קרובות</small>
+            </label>
+            <label class="scale__item">
+              <input type="radio" name="score" value="5" />
+              <span>5</span>
+              <small>תמיד</small>
+            </label>
+          </div>
+          <div class="actions actions--bottom">
+            <button class="ghost" id="prev" disabled>חזרה</button>
+            <button class="primary" id="next" disabled>הבא</button>
+          </div>
+        </section>
+
+        <section class="screen screen--scroll" id="results">
+          <h2>התוצאות שלך</h2>
+          <div class="results-single">
+            <div class="score-display">
+              <div class="score-display__label">ציון כולל</div>
+              <div class="score-display__value" id="total-score"></div>
+              <div class="score-display__max">מתוך 100</div>
+            </div>
+          </div>
+          <div class="interpretation" id="interpretation">
+            <h3 id="interpretation-title"></h3>
+            <p id="interpretation-text"></p>
+          </div>
+          <div class="actions results-actions">
+            <button class="ghost" id="back-to-questions">חזרה לשאלות</button>
+            <button class="primary" id="copy-results">העתק תוצאות</button>
+            <button class="ghost" id="restart">מילוי מחדש</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

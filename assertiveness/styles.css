@@ -1,0 +1,364 @@
+@import url("../shared.css");
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   שאלון אסרטיביות - Local Styles
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Back to Hub Link */
+.back-link {
+  display: inline-block;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 16px;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--primary);
+}
+
+.app__logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.app {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 20px 80px;
+}
+
+.app__header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.app__header h1 {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+.app__subtitle {
+  color: var(--muted);
+  margin: 0;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 32px;
+  min-height: calc(100vh - 220px);
+  position: relative;
+  overflow: hidden;
+}
+
+.screen {
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  padding: 32px 32px 48px;
+  overflow: hidden;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.screen--active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.screen--scroll {
+  overflow-y: auto;
+}
+
+.steps {
+  text-align: right;
+  padding-right: 1.25rem;
+  margin: 1rem 0;
+  line-height: 1.8;
+}
+
+.scale-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--bg);
+  border-radius: 12px;
+}
+
+.scale-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.scale-legend__item span {
+  background: var(--primary);
+  color: #fff;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.progress__bar {
+  width: 100%;
+  height: 10px;
+  background: #edf0f7;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress__fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--primary), #8b9bff);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.question {
+  margin-bottom: 24px;
+}
+
+.question__text {
+  background: #f5f7ff;
+  border-radius: 18px;
+  padding: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.6;
+  border: 1px solid rgba(76, 102, 255, 0.2);
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.scale {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.scale__item {
+  background: #f8f9fd;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  padding: 14px 8px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scale__item input {
+  display: none;
+}
+
+.scale__item span {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.scale__item small {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.scale__item:has(input:checked) {
+  background: var(--primary);
+  border-color: var(--primary-dark);
+  color: white;
+  box-shadow: 0 12px 20px rgba(76, 102, 255, 0.25);
+}
+
+.scale__item:has(input:checked) small {
+  opacity: 1;
+}
+
+/* Results */
+.results-single {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.score-display {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--bg);
+  border-radius: 16px;
+  min-width: 120px;
+}
+
+.score-display--percentage {
+  background: var(--primary);
+  color: #fff;
+}
+
+.score-display__label {
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.score-display__value {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.score-display__max {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.interpretation {
+  background: #f7f9ff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  border: 1px solid var(--border);
+}
+
+.interpretation h3 {
+  margin: 0 0 0.75rem;
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.interpretation p {
+  margin: 0;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.steps {
+  color: var(--muted);
+  padding: 0 20px 0 0;
+  margin: 24px 0 32px;
+  display: grid;
+  gap: 12px;
+}
+
+.scale-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #f7f9ff;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.scale-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.scale-legend__item span {
+  background: var(--primary);
+  color: #fff;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .app__logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
+  .card,
+  .screen {
+    padding: 20px 20px 32px;
+  }
+
+  .card {
+    min-height: calc(100vh - 140px);
+  }
+
+  .progress {
+    margin-bottom: 16px;
+  }
+
+  .question {
+    margin-bottom: 16px;
+  }
+
+  .question__text {
+    font-size: 16px;
+    padding: 16px;
+    min-height: auto;
+  }
+
+  .scale {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .scale__item {
+    padding: 10px 6px;
+  }
+
+  .scale__item span {
+    font-size: 18px;
+  }
+
+  .scale__item small {
+    font-size: 10px;
+  }
+
+  .score-display__value {
+    font-size: 2.5rem;
+  }
+}
+
+#question-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
