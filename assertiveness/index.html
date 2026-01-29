@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>שאלון אסרטיביות - אבחון עצמי</title>
+    <title>שאלון אסרטיביות</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap"
       rel="stylesheet"
@@ -16,7 +16,7 @@
         <a href="../" class="back-link">← חזרה למרכז השאלונים</a>
         <img src="../logo.avif" alt="מירב ים חן" class="app__logo" />
         <div class="app__badge">שאלון אסרטיביות</div>
-        <h1>אבחון עצמי</h1>
+        <h1>בדוק את רמת התקיפות שלך</h1>
         <p class="app__subtitle">
           עונים על כל שאלה לפי הסקאלה 1-5, ומתקדמים שלב אחר שלב.
         </p>
@@ -40,7 +40,7 @@
           </div>
           <div class="actions actions--center">
             <button class="primary" id="start">מתחילים</button>
-            <button class="ghost" id="fill-random">מילוי בדיקה אוטומטי</button>
+            <a href="../" class="ghost">חזרה למרכז השאלונים</a>
           </div>
         </section>
 
@@ -95,11 +95,6 @@
               <div class="score-display__value" id="total-score"></div>
               <div class="score-display__max">מתוך 100</div>
             </div>
-            <div class="score-display score-display--percentage">
-              <div class="score-display__label">ציון באחוזים</div>
-              <div class="score-display__value" id="percentage-score"></div>
-              <div class="score-display__max">%</div>
-            </div>
           </div>
           <div class="interpretation" id="interpretation">
             <h3 id="interpretation-title"></h3>
@@ -114,6 +109,6 @@
       </main>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>

@@ -18,6 +18,13 @@
         </div>
         <h1 class="hub-header__title">מרכז השאלונים</h1>
         <p class="hub-header__subtitle">מירב ים חן</p>
+        <div class="hub-header__test-mode">
+          <label class="test-mode-toggle">
+            <input type="checkbox" id="test-mode-toggle" />
+            <span class="test-mode-toggle__slider"></span>
+            <span class="test-mode-toggle__label">מצב בדיקה</span>
+          </label>
+        </div>
       </header>
 
       <main class="hub-content">
@@ -26,7 +33,7 @@
             <div class="questionnaire-card__icon">🎯</div>
             <h2 class="questionnaire-card__title">מנוף הפרואקטיביות</h2>
             <p class="questionnaire-card__description">
-              אבחון עצמי של מנופי הפרואקטיביות שלך - זיהוי דפוסי התנהלות בין
+              זיהוי דפוסי התנהלות בין
               תגובתיות לפרואקטיביות בשישה תחומים מרכזיים.
             </p>
             <div class="questionnaire-card__meta">
@@ -90,7 +97,7 @@
             <div class="questionnaire-card__icon">🔄</div>
             <h2 class="questionnaire-card__title">שלושת מעגלי המנהיגות</h2>
             <p class="questionnaire-card__description">
-              אבחון עצמי בשלושה מעגלים: הובלה עצמית, הובלת אחרים והובלה ארגונית.
+              שלושה מעגלים: הובלה עצמית, הובלת אחרים והובלה ארגונית.
               זהה את החוזקות והאזורים לפיתוח.
             </p>
             <div class="questionnaire-card__meta">
@@ -137,8 +144,48 @@
       </main>
 
       <footer class="hub-footer">
+        <p class="hub-footer__privacy">🔒 פרטיות מלאה: השאלונים רצים בדפדפן שלך בלבד. התשובות לא נשמרות ולא נשלחות לשום מקום.</p>
         <p>© 2026 מירב ים חן. כל הזכויות שמורות.</p>
       </footer>
     </div>
+
+    <script type="module">
+      import { isTestMode, getTestModeUrl, toggleTestMode } from './lib/testmode.js';
+
+      // Initialize toggle state
+      const toggle = document.getElementById('test-mode-toggle');
+      toggle.checked = isTestMode();
+
+      // Update all questionnaire links based on test mode state
+      function updateQuestionnaireLinks() {
+        const links = document.querySelectorAll('.questionnaire-card__cta');
+        const testModeActive = isTestMode();
+        
+        links.forEach(link => {
+          const baseUrl = link.getAttribute('href');
+          if (testModeActive) {
+            link.href = getTestModeUrl(baseUrl);
+          } else {
+            // Remove testmode param if present
+            try {
+              const url = new URL(baseUrl, window.location.origin);
+              url.searchParams.delete('testmode');
+              link.href = url.pathname + (url.search ? url.search : '');
+            } catch (e) {
+              // If relative URL parsing fails, just use base URL
+              link.href = baseUrl.split('?')[0];
+            }
+          }
+        });
+      }
+
+      // Update links on page load
+      updateQuestionnaireLinks();
+
+      // Handle toggle click
+      toggle.addEventListener('change', () => {
+        toggleTestMode();
+      });
+    </script>
   </body>
 </html>

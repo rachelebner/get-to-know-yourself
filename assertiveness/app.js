@@ -1,5 +1,16 @@
-let content = null;
+// ═══════════════════════════════════════════════════════════════════════════
+// שאלון אסרטיביות - Application Logic
+// All Hebrew text loaded from content.json
+// ═══════════════════════════════════════════════════════════════════════════
 
+import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../lib/testmode.js';
+import { copyAsMarkdown, copyAsRichText, shareNative, createShareButtons } from '../lib/share.js';
+
+let content = null;
+let currentIndex = 0;
+let answers = [];
+
+// DOM Elements
 const introScreen = document.getElementById("intro");
 const questionScreen = document.getElementById("question-screen");
 const resultsScreen = document.getElementById("results");
@@ -9,24 +20,26 @@ const questionText = document.getElementById("question-text");
 const nextButton = document.getElementById("next");
 const prevButton = document.getElementById("prev");
 const startButton = document.getElementById("start");
-const fillRandomButton = document.getElementById("fill-random");
 const backToQuestionsButton = document.getElementById("back-to-questions");
 const restartButton = document.getElementById("restart");
-const copyResultsButton = document.getElementById("copy-results");
 const totalScoreEl = document.getElementById("total-score");
-const percentageScoreEl = document.getElementById("percentage-score");
 const interpretationTitle = document.getElementById("interpretation-title");
 const interpretationText = document.getElementById("interpretation-text");
 const scoreInputs = Array.from(document.querySelectorAll("input[name='score']"));
 
-let currentIndex = 0;
-let answers = [];
+// ═══════════════════════════════════════════════════════════════════════════
+// Screen Management
+// ═══════════════════════════════════════════════════════════════════════════
 
 const updateScreen = (screen) => {
   [introScreen, questionScreen, resultsScreen].forEach((section) => {
     section.classList.toggle("screen--active", section === screen);
   });
 };
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Question Flow
+// ═══════════════════════════════════════════════════════════════════════════
 
 const updateQuestion = () => {
   const question = content.questions[currentIndex];
@@ -63,6 +76,10 @@ const fillRandomAnswers = () => {
   }
 };
 
+// ═══════════════════════════════════════════════════════════════════════════
+// Scoring
+// ═══════════════════════════════════════════════════════════════════════════
+
 const calculateScores = () => {
   const total = answers.reduce((sum, score) => sum + score, 0);
   const percentage = total * content.scoring.calculation.totalMultiplier;
@@ -76,15 +93,22 @@ const getInterpretation = (percentage) => {
   return range || content.scoreRanges[content.scoreRanges.length - 1];
 };
 
+// ═══════════════════════════════════════════════════════════════════════════
+// Results Display
+// ═══════════════════════════════════════════════════════════════════════════
+
 const showResults = () => {
   const { total, percentage } = calculateScores();
   const interpretation = getInterpretation(percentage);
 
   totalScoreEl.textContent = total;
-  percentageScoreEl.textContent = percentage;
   interpretationTitle.textContent = interpretation.title;
   interpretationText.textContent = interpretation.description;
 };
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Export Results
+// ═══════════════════════════════════════════════════════════════════════════
 
 const buildResultsMarkdown = () => {
   const { total, percentage } = calculateScores();
@@ -96,9 +120,6 @@ const buildResultsMarkdown = () => {
     `## ${content.markdown.totalScore}`,
     `${total} מתוך 100`,
     "",
-    `## ${content.markdown.percentageScore}`,
-    `${percentage}%`,
-    "",
     `## ${content.markdown.interpretation}`,
     `**${interpretation.title}**`,
     "",
@@ -106,37 +127,33 @@ const buildResultsMarkdown = () => {
   ].join("\n");
 };
 
-const copyResultsToClipboard = async () => {
-  const markdown = buildResultsMarkdown();
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(markdown);
-      return;
-    }
-  } catch (error) {
-    console.warn("Clipboard API failed, falling back to execCommand.", error);
-  }
-  const textarea = document.createElement("textarea");
-  textarea.value = markdown;
-  textarea.setAttribute("readonly", "true");
-  textarea.style.position = "absolute";
-  textarea.style.left = "-9999px";
-  document.body.appendChild(textarea);
-  textarea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textarea);
+const buildResultsRichText = () => {
+  const { total, percentage } = calculateScores();
+  const interpretation = getInterpretation(percentage);
+
+  let html = `<h1>${content.markdown.title}</h1>`;
+  html += `<h2>${content.markdown.totalScore}</h2>`;
+  html += `<p><strong>${total}</strong> מתוך 100</p>`;
+  html += `<h2>${content.markdown.interpretation}</h2>`;
+  html += `<h3>${interpretation.title}</h3>`;
+  html += `<p>${interpretation.description}</p>`;
+
+  return html;
 };
 
-const initApp = async () => {
-  content = await fetch("./content.json").then((r) => r.json());
-  answers = new Array(content.questions.length).fill(null);
+// ═══════════════════════════════════════════════════════════════════════════
+// Event Listeners
+// ═══════════════════════════════════════════════════════════════════════════
 
+const setupEventListeners = () => {
+  // Score inputs
   scoreInputs.forEach((input) => {
     input.addEventListener("change", (event) => {
       setAnswer(Number(event.target.value));
     });
   });
 
+  // Navigation
   nextButton.addEventListener("click", () => {
     if (currentIndex < content.questions.length - 1) {
       currentIndex += 1;
@@ -156,18 +173,14 @@ const initApp = async () => {
     }
   });
 
+  // Start
   startButton.addEventListener("click", () => {
     currentIndex = 0;
     updateQuestion();
     updateScreen(questionScreen);
   });
 
-  fillRandomButton.addEventListener("click", () => {
-    fillRandomAnswers();
-    showResults();
-    updateScreen(resultsScreen);
-  });
-
+  // Restart
   restartButton.addEventListener("click", () => {
     answers.fill(null);
     scoreInputs.forEach((input) => {
@@ -176,14 +189,100 @@ const initApp = async () => {
     updateScreen(introScreen);
   });
 
+  // Back to questions
   backToQuestionsButton.addEventListener("click", () => {
     updateQuestion();
     updateScreen(questionScreen);
   });
+};
 
-  copyResultsButton.addEventListener("click", () => {
-    copyResultsToClipboard();
+// ═══════════════════════════════════════════════════════════════════════════
+// Share Buttons Setup
+// ═══════════════════════════════════════════════════════════════════════════
+
+const setupShareButtons = () => {
+  const resultsActions = document.querySelector('#results .results-actions');
+  if (!resultsActions) return;
+
+  // Create share buttons HTML
+  const shareButtonsHTML = createShareButtons({
+    copyMarkdown: "העתק כטקסט",
+    copyRichText: "העתק מעוצב",
+    share: "שתף",
+    copyResults: content.ui.copyResults || "העתק תוצאות"
   });
+
+  // Replace copy-results button with share buttons container
+  const copyResultsBtn = resultsActions.querySelector('#copy-results');
+  if (copyResultsBtn) {
+    const shareContainer = document.createElement('div');
+    shareContainer.className = 'share-buttons-container';
+    shareContainer.innerHTML = shareButtonsHTML;
+    copyResultsBtn.replaceWith(shareContainer);
+  } else {
+    // If button doesn't exist, add before restart button
+    const restartBtn = resultsActions.querySelector('#restart');
+    if (restartBtn) {
+      const shareContainer = document.createElement('div');
+      shareContainer.className = 'share-buttons-container';
+      shareContainer.innerHTML = shareButtonsHTML;
+      resultsActions.insertBefore(shareContainer, restartBtn);
+    }
+  }
+
+  // Setup event listeners for share buttons
+  setupShareEventListeners();
+};
+
+const setupShareEventListeners = () => {
+  // Use event delegation for dynamically created buttons
+  document.addEventListener('click', async (e) => {
+    const action = e.target.closest('[data-action]')?.getAttribute('data-action');
+    if (!action) return;
+
+    const markdown = buildResultsMarkdown();
+    const html = buildResultsRichText();
+
+    try {
+      if (action === 'copy-markdown') {
+        await copyAsMarkdown(markdown);
+      } else if (action === 'copy-richtext') {
+        await copyAsRichText(html);
+      } else if (action === 'share-native') {
+        await shareNative(
+          content.meta?.title || 'תוצאות שאלון אסרטיביות',
+          markdown.replace(/#{1,3}\s/g, '').replace(/\*\*/g, '').substring(0, 200) + '...'
+        );
+      }
+    } catch (error) {
+      console.error('Share action failed:', error);
+    }
+  });
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Initialization
+// ═══════════════════════════════════════════════════════════════════════════
+
+const initApp = async () => {
+  try {
+    const response = await fetch("./content.json");
+    content = await response.json();
+    answers = new Array(content.questions.length).fill(null);
+    setupEventListeners();
+    setupShareButtons();
+
+    // Test mode integration
+    if (isTestMode()) {
+      insertTestModeIndicator();
+      updateBackLinks();
+      fillRandomAnswers();
+      showResults();
+      updateScreen(resultsScreen);
+    }
+  } catch (error) {
+    console.error("Failed to load content:", error);
+  }
 };
 
 initApp();

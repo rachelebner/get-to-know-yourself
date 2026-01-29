@@ -16,20 +16,19 @@ A vanilla HTML/CSS/JS hub for personality questionnaires. Each questionnaire is 
 ├── index.html              # Hub page - questionnaire directory
 ├── styles.css              # Hub styles
 ├── shared.css              # Minimal shared styles (tokens + buttons)
+├── lib/                    # Shared JavaScript utilities
+│   ├── testmode.js         # Test mode detection and UI
+│   └── share.js            # Multi-format copy/share utilities
 ├── docs/
 │   ├── spec.md             # This file (requirements)
 │   ├── design.md           # Technical implementation details
 │   └── retro.md            # Retrospective, workflow insights, session logs
-├── proactiveness/          # Questionnaire 1
-│   ├── index.html
-│   ├── styles.css
-│   ├── app.js
-│   └── README.md           # This questionnaire's specific structure
-└── [questionnaire-name]/   # Future questionnaires follow same pattern
+└── [questionnaire-name]/   # Each questionnaire follows same pattern
     ├── index.html
     ├── styles.css
     ├── app.js
-    └── README.md
+    ├── content.json        # Hebrew text content
+    └── README.md           # Questionnaire-specific structure
 ```
 
 ### Design Principles
@@ -85,7 +84,7 @@ Each questionnaire is a single-page app with multiple screens. The specific stru
 - **Screen flow:** Intro → Questions → Results (+ optional analysis screens)
 - **Progress indication:** Visual feedback during question answering
 - **Navigation:** Back to hub link, prev/next within questionnaire
-- **Results export:** "העתק תוצאות" button copies Markdown to clipboard
+- **Results export:** Share buttons for copying results (desktop: single button, mobile: multiple formats)
 
 ### What Varies Per Questionnaire
 
@@ -99,18 +98,18 @@ Example: `proactiveness/README.md`
 
 ---
 
-## P2 Features (Future)
+## Implemented Features
 
-- [ ] Enhanced share (multi-format copy: Markdown, Rich Text, Image + Web Share API)
+### Test Mode (P3.1)
+- Toggle in hub header activates test mode
+- When active: questionnaires auto-fill random answers and skip to results
+- URL param `?testmode=1` persists state across navigation
+- Visual indicator shown in questionnaire headers
 
----
-
-## P3 Features (Later)
-
-- [ ] **Test mode toggle** - Hub-level toggle that, when enabled:
-  - Auto-fills random answers when entering any questionnaire
-  - Skips directly to results/analysis screen
-  - Useful for quickly testing all questionnaires without manual input
+### Enhanced Share (P2.5)
+- **Desktop:** Single "העתק תוצאות" button (copies Markdown)
+- **Mobile:** Separate buttons for Markdown, Rich Text, and native share
+- Visual feedback ("הועתק!") after copy action
 
 ---
 
@@ -119,8 +118,12 @@ Example: `proactiveness/README.md`
 | Name | Folder | Status |
 |------|--------|--------|
 | מנוף הפרואקטיביות | `/proactiveness` | ✅ Complete |
-| סגנונות תקשורת | `/communication-styles` | 🚧 In Progress |
-| שאלון ניהול מצבי | `/situational-leadership` | 🚧 In Progress |
+| סגנונות תקשורת | `/communication-styles` | ✅ Complete |
+| שאלון ניהול מצבי | `/situational-leadership` | ✅ Complete |
+| מנועי המחוברות | `/engagement-drivers` | ✅ Complete |
+| שלושת מעגלי המנהיגות | `/leadership-circles` | ✅ Complete |
+| מודל אומץ | `/managerial-courage` | ✅ Complete |
+| אסרטיביות | `/assertiveness` | ✅ Complete |
 
 ---
 

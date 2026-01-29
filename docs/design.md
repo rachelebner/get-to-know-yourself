@@ -16,32 +16,23 @@
 ├── index.html              # Hub page (questionnaire directory)
 ├── styles.css              # Hub-only styles
 ├── shared.css              # Minimal shared styles (tokens + buttons)
+├── lib/                    # Shared JavaScript utilities
+│   ├── testmode.js         # Test mode detection, toggle, indicator
+│   └── share.js            # Multi-format copy/share utilities
 ├── docs/
 │   ├── spec.md
 │   ├── design.md
 │   ├── retro.md            # Retrospective, workflow insights, session logs
-│   └── parallel-process.md # Workflow for batch questionnaire processing
+│   └── parallel-process.md # Workflow for parallel work
 ├── _templates/             # Reusable questionnaire templates
 │   └── likert-categories/  # For Likert scale + category scoring
-│       ├── README.md
-│       ├── index.html
-│       ├── styles.css
-│       ├── app.js
-│       └── content-schema.json
-├── proactiveness/          # Questionnaire 1
-│   ├── index.html
-│   ├── styles.css          # Imports ../shared.css + local overrides
-│   ├── app.js
-│   ├── content.json        # Hebrew content
-│   ├── README.md           # Documents this questionnaire's specific structure
-│   └── *.pdf / *.docx      # Source document(s) - original questionnaire file
-└── [future-questionnaire]/ # Same structure
+└── [questionnaire]/        # Each questionnaire folder
     ├── index.html
-    ├── styles.css
-    ├── app.js
-    ├── content.json
-    ├── README.md
-    └── *.pdf / *.docx      # Source document(s)
+    ├── styles.css          # Imports ../shared.css + local overrides
+    ├── app.js              # Imports from ../lib/ for shared functionality
+    ├── content.json        # Hebrew content
+    ├── README.md           # Documents this questionnaire's specific structure
+    └── *.pdf / *.docx      # Source document(s) - original questionnaire file
 ```
 
 ### Design Decision: Minimal Shared Styles

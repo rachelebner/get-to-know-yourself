@@ -1,3 +1,6 @@
+import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../lib/testmode.js';
+import { isMobile, copyAsMarkdown, copyAsRichText, shareNative, canShare } from '../lib/share.js';
+
 let content = null;
 
 const introScreen = document.getElementById("intro");
@@ -10,13 +13,12 @@ const questionText = document.getElementById("question-text");
 const nextButton = document.getElementById("next");
 const prevButton = document.getElementById("prev");
 const startButton = document.getElementById("start");
-const fillRandomButton = document.getElementById("fill-random");
 const backToQuestionsButton = document.getElementById("back-to-questions");
 const restartButton = document.getElementById("restart");
 const resultsGrid = document.getElementById("results-grid");
 const analysisGrid = document.getElementById("analysis-grid");
 const toAnalysisButton = document.getElementById("to-analysis");
-const copyResultsButton = document.getElementById("copy-results");
+const shareButtonsContainer = document.getElementById("share-buttons-container");
 const backToResultsButton = document.getElementById("back-to-results");
 const backToQuestionsAnalysisButton = document.getElementById("back-to-questions-analysis");
 const scoreInputs = Array.from(document.querySelectorAll("input[name='score']"));
@@ -229,30 +231,181 @@ const buildResultsMarkdown = () => {
   return lines.join("\n");
 };
 
-const copyResultsToClipboard = async () => {
+const buildResultsRichText = () => {
+  const scores = getCategoryScores();
+  const sorted = [...scores].sort((a, b) => b.sum - a.sum);
+  const dominant = getDominantDrivers(scores);
+  
+  const categoryItems = sorted.map((category) => {
+    const isDominant = dominant.some((d) => d.id === category.id);
+    const dominantMarker = isDominant ? ' <strong style="color: #4c66ff;">⭐ (דומיננטי)</strong>' : '';
+    return `<li><strong>${category.title}</strong>: ${category.sum}${dominantMarker}</li>`;
+  }).join('');
+  
+  const dominantItems = dominant.map((category) => {
+    const interpretation = getInterpretation(category.sum, category);
+    return `
+      <div style="margin-bottom: 20px; padding: 16px; background: #f5f7ff; border-radius: 8px; border-right: 4px solid #4c66ff;">
+        <h3 style="margin: 0 0 8px 0; color: #4c66ff;">${category.title} (${category.sum})</h3>
+        <p style="margin: 0 0 8px 0;"><strong>${content.markdown.descriptionLabel}:</strong> ${category.description}</p>
+        <p style="margin: 0;">${interpretation}</p>
+      </div>
+    `;
+  }).join('');
+  
+  const developmentAreas = sorted.filter((c) => {
+    const [min, max] = c.scoreRange;
+    const range = max - min;
+    const third = range / 3;
+    return c.sum <= min + third;
+  });
+  
+  const developmentItems = developmentAreas.length > 0
+    ? developmentAreas.map((category) => {
+        return `
+          <div style="margin-bottom: 20px; padding: 16px; background: #fff5f5; border-radius: 8px; border-right: 4px solid #ff6b6b;">
+            <h3 style="margin: 0 0 8px 0; color: #ff6b6b;">${category.title} (${category.sum})</h3>
+            <p style="margin: 0 0 8px 0;">${category.description}</p>
+            <p style="margin: 0;">${category.interpretation.low}</p>
+          </div>
+        `;
+      }).join('')
+    : '';
+  
+  const reflectionItems = content.analysis.reflectionQuestions
+    .map((q) => `<li style="margin-bottom: 8px;">${q}</li>`)
+    .join('');
+  
+  return `
+    <h1 style="margin-bottom: 16px;">${content.markdown.title}</h1>
+    <blockquote style="margin: 16px 0; padding: 12px 16px; background: #f5f7ff; border-right: 4px solid #4c66ff; border-radius: 4px;">
+      ${content.results.modelContext}
+    </blockquote>
+    <h2 style="margin-top: 24px; margin-bottom: 12px;">${content.markdown.categoryScores}</h2>
+    <ul style="margin: 0; padding-right: 20px;">${categoryItems}</ul>
+    <h2 style="margin-top: 24px; margin-bottom: 12px;">${content.markdown.dominantDrivers}</h2>
+    ${dominantItems}
+    ${developmentAreas.length > 0 ? `
+    <h2 style="margin-top: 24px; margin-bottom: 12px;">${content.markdown.developmentAreas}</h2>
+    ${developmentItems}
+    ` : ''}
+    <h2 style="margin-top: 24px; margin-bottom: 12px;">${content.analysis.reflectionTitle}</h2>
+    <ul style="margin: 0; padding-right: 20px;">${reflectionItems}</ul>
+  `;
+};
+
+const setupShareButtons = () => {
+  if (!shareButtonsContainer) return;
+  
+  const mobile = isMobile();
   const markdown = buildResultsMarkdown();
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(markdown);
-      return;
+  const richText = buildResultsRichText();
+  
+  if (mobile) {
+    // Mobile: Show separate buttons
+    shareButtonsContainer.innerHTML = `
+      <button class="share-btn share-btn-markdown" data-action="copy-markdown" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+        margin-bottom: 12px;
+      ">העתק כטקסט</button>
+      <button class="share-btn share-btn-richtext" data-action="copy-richtext" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+        margin-bottom: 12px;
+      ">העתק מעוצב</button>
+      ${canShare() ? `
+      <button class="share-btn share-btn-native" data-action="share-native" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+      ">שתף</button>
+      ` : ''}
+    `;
+    
+    // Wire up mobile button handlers
+    shareButtonsContainer.querySelector('[data-action="copy-markdown"]')?.addEventListener('click', async () => {
+      await copyAsMarkdown(markdown);
+    });
+    
+    shareButtonsContainer.querySelector('[data-action="copy-richtext"]')?.addEventListener('click', async () => {
+      await copyAsRichText(richText);
+    });
+    
+    if (canShare()) {
+      shareButtonsContainer.querySelector('[data-action="share-native"]')?.addEventListener('click', async () => {
+        try {
+          await shareNative(content.markdown.title, markdown);
+        } catch (error) {
+          // User cancelled or error - silently fail
+        }
+      });
     }
-  } catch (error) {
-    console.warn("Clipboard API failed, falling back to execCommand.", error);
+  } else {
+    // Desktop: Single button (current behavior)
+    shareButtonsContainer.innerHTML = `
+      <button class="share-btn share-btn-desktop" data-action="copy-markdown" style="
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+      ">העתק תוצאות</button>
+    `;
+    
+    shareButtonsContainer.querySelector('[data-action="copy-markdown"]')?.addEventListener('click', async () => {
+      await copyAsMarkdown(markdown);
+    });
   }
-  const textarea = document.createElement("textarea");
-  textarea.value = markdown;
-  textarea.setAttribute("readonly", "true");
-  textarea.style.position = "absolute";
-  textarea.style.left = "-9999px";
-  document.body.appendChild(textarea);
-  textarea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textarea);
 };
 
 const initApp = async () => {
+  // Add test mode indicator if active
+  if (isTestMode()) {
+    insertTestModeIndicator();
+    updateBackLinks();
+  }
+  
   content = await fetch("./content.json").then((r) => r.json());
   answers = new Array(content.questions.length).fill(null);
+  
+  // If test mode is active, fill random answers and show results immediately
+  if (isTestMode()) {
+    fillRandomAnswers();
+    showResults();
+    updateScreen(resultsScreen);
+  }
   
   // Populate intro screen
   introInstructions.textContent = content.intro.instructions;
@@ -301,12 +454,6 @@ const initApp = async () => {
     updateScreen(questionScreen);
   });
   
-  fillRandomButton.addEventListener("click", () => {
-    fillRandomAnswers();
-    showResults();
-    updateScreen(resultsScreen);
-  });
-  
   restartButton.addEventListener("click", () => {
     answers.fill(null);
     scoreInputs.forEach((input) => {
@@ -322,11 +469,8 @@ const initApp = async () => {
   
   toAnalysisButton.addEventListener("click", () => {
     showAnalysis();
+    setupShareButtons();
     updateScreen(analysisScreen);
-  });
-  
-  copyResultsButton.addEventListener("click", () => {
-    copyResultsToClipboard();
   });
   
   backToResultsButton.addEventListener("click", () => {

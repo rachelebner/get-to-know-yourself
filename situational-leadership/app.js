@@ -3,6 +3,9 @@
 // Based on Hersey & Blanchard's Situational Leadership Theory
 // ═══════════════════════════════════════════════════════════════════════════
 
+import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../lib/testmode.js';
+import { isMobile, copyAsMarkdown, copyAsRichText, shareNative, canShare } from '../lib/share.js';
+
 // Content loaded from JSON
 let CONTENT = null;
 
@@ -51,12 +54,28 @@ async function loadContent() {
 }
 
 function initializeApp() {
+  // Add test mode indicator if active
+  if (isTestMode()) {
+    insertTestModeIndicator();
+    updateBackLinks();
+  }
+
   // Populate intro instructions
   const instructionsList = document.querySelector("#intro .steps");
   if (instructionsList && CONTENT.intro.instructions) {
     instructionsList.innerHTML = CONTENT.intro.instructions
       .map((instruction) => `<li>${instruction}</li>`)
       .join("");
+  }
+
+  // If test mode is active, fill random answers and show results immediately
+  if (isTestMode()) {
+    CONTENT.questions.forEach((q) => {
+      const randomOption = q.options[Math.floor(Math.random() * q.options.length)];
+      answers[q.id] = randomOption.id;
+    });
+    showScreen('results');
+    renderResults();
   }
 
   // Set up event listeners
@@ -309,6 +328,162 @@ function exportResults() {
   return markdown;
 }
 
+function exportResultsRichText() {
+  const results = calculateResults();
+  const styles = CONTENT.styles;
+  const exp = CONTENT.export;
+  const headers = exp.tableHeaders;
+
+  // Find dominant
+  const maxCount = Math.max(...Object.values(results).map((r) => r.count));
+  const dominantStyles = Object.entries(results)
+    .filter(([, data]) => data.count === maxCount)
+    .map(([styleId]) => styles[styleId].title);
+
+  let html = `<h1>${exp.title}</h1>`;
+  html += `<h2>${exp.profileTitle}</h2>`;
+  html += `<table style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">`;
+  html += `<thead><tr style="background: #f5f5f5;">`;
+  html += `<th style="padding: 8px; text-align: right; border: 1px solid #ddd;">${headers.style}</th>`;
+  html += `<th style="padding: 8px; text-align: center; border: 1px solid #ddd;">${headers.choices}</th>`;
+  html += `<th style="padding: 8px; text-align: center; border: 1px solid #ddd;">${headers.effectiveness}</th>`;
+  html += `<th style="padding: 8px; text-align: right; border: 1px solid #ddd;">${headers.interpretation}</th>`;
+  html += `</tr></thead><tbody>`;
+
+  Object.entries(styles).forEach(([styleId, style]) => {
+    const data = results[styleId];
+    const eff = getEffectivenessLabel(data.effectiveness);
+    const prefix = data.effectiveness > 0 ? "+" : "";
+    html += `<tr>`;
+    html += `<td style="padding: 8px; border: 1px solid #ddd;"><strong>${style.title}</strong></td>`;
+    html += `<td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${data.count}</td>`;
+    html += `<td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${prefix}${data.effectiveness}</td>`;
+    html += `<td style="padding: 8px; border: 1px solid #ddd;">${eff.label}</td>`;
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table>`;
+
+  html += `<h2>${exp.dominantTitle}</h2>`;
+  html += `<p><strong>${dominantStyles.join(", ")}</strong> (${maxCount} בחירות)</p>`;
+
+  html += `<h2>${exp.detailsTitle}</h2>`;
+
+  Object.entries(styles).forEach(([styleId, style]) => {
+    const data = results[styleId];
+    const eff = getEffectivenessLabel(data.effectiveness);
+    html += `<div style="margin-bottom: 20px;">`;
+    html += `<h3>${style.title}</h3>`;
+    html += `<p><strong>${style.subtitle}</strong> — ${style.description}</p>`;
+    html += `<p>בחירות: ${data.count}, יעילות: ${data.effectiveness > 0 ? "+" : ""}${data.effectiveness} (${eff.label})</p>`;
+    html += `<p>${data.effectiveness >= 0 ? style.effective : style.ineffective}</p>`;
+    html += `</div>`;
+  });
+
+  return html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Share Buttons Setup
+// ═══════════════════════════════════════════════════════════════════════════
+
+function setupShareButtons() {
+  const shareButtonsContainer = document.getElementById("share-buttons-container");
+  if (!shareButtonsContainer) return;
+
+  const mobile = isMobile();
+  const markdown = exportResults();
+  const richText = exportResultsRichText();
+
+  if (mobile) {
+    // Mobile: Show separate buttons
+    shareButtonsContainer.innerHTML = `
+      <button class="share-btn share-btn-markdown" data-action="copy-markdown" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+        margin-bottom: 12px;
+      ">העתק כטקסט</button>
+      <button class="share-btn share-btn-richtext" data-action="copy-richtext" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+        margin-bottom: 12px;
+      ">העתק מעוצב</button>
+      ${canShare() ? `
+      <button class="share-btn share-btn-native" data-action="share-native" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+      ">שתף</button>
+      ` : ''}
+    `;
+
+    // Wire up mobile button handlers
+    shareButtonsContainer.querySelector('[data-action="copy-markdown"]')?.addEventListener('click', async () => {
+      await copyAsMarkdown(markdown);
+    });
+
+    shareButtonsContainer.querySelector('[data-action="copy-richtext"]')?.addEventListener('click', async () => {
+      await copyAsRichText(richText);
+    });
+
+    if (canShare()) {
+      shareButtonsContainer.querySelector('[data-action="share-native"]')?.addEventListener('click', async () => {
+        try {
+          await shareNative(CONTENT.export.title, markdown);
+        } catch (error) {
+          // User cancelled or error - silently fail
+        }
+      });
+    }
+  } else {
+    // Desktop: Single button (current behavior)
+    shareButtonsContainer.innerHTML = `
+      <button class="share-btn share-btn-desktop" data-action="copy-markdown" style="
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+      ">העתק תוצאות</button>
+    `;
+
+    shareButtonsContainer.querySelector('[data-action="copy-markdown"]')?.addEventListener('click', async () => {
+      await copyAsMarkdown(markdown);
+    });
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // Event Listeners
 // ═══════════════════════════════════════════════════════════════════════════
@@ -317,16 +492,6 @@ function setupEventListeners() {
   document.getElementById("start").addEventListener("click", () => {
     showScreen("question");
     renderQuestion();
-  });
-
-  document.getElementById("fill-random").addEventListener("click", () => {
-    CONTENT.questions.forEach((q) => {
-      const randomOption =
-        q.options[Math.floor(Math.random() * q.options.length)];
-      answers[q.id] = randomOption.id;
-    });
-    showScreen("results");
-    renderResults();
   });
 
   elements.prevBtn.addEventListener("click", () => {
@@ -355,6 +520,7 @@ function setupEventListeners() {
   document.getElementById("to-analysis").addEventListener("click", () => {
     showScreen("analysis");
     renderAnalysis();
+    setupShareButtons(); // Update share buttons when showing analysis screen
   });
 
   document.getElementById("restart").addEventListener("click", () => {
@@ -367,17 +533,8 @@ function setupEventListeners() {
     showScreen("results");
   });
 
-  document.getElementById("copy-results").addEventListener("click", () => {
-    const markdown = exportResults();
-    navigator.clipboard.writeText(markdown).then(() => {
-      const btn = document.getElementById("copy-results");
-      const originalText = btn.textContent;
-      btn.textContent = CONTENT.ui.copied;
-      setTimeout(() => {
-        btn.textContent = originalText;
-      }, 2000);
-    });
-  });
+  // Share buttons setup (replaces copy-results button)
+  setupShareButtons();
 
   document
     .getElementById("back-to-questions-analysis")

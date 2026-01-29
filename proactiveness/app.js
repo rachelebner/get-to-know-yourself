@@ -1,3 +1,6 @@
+import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../lib/testmode.js';
+import { isMobile, copyAsMarkdown, copyAsRichText, shareNative, canShare } from '../lib/share.js';
+
 let content = null;
 
 const introScreen = document.getElementById("intro");
@@ -10,7 +13,6 @@ const statementLeft = document.getElementById("statement-left");
 const nextButton = document.getElementById("next");
 const prevButton = document.getElementById("prev");
 const startButton = document.getElementById("start");
-const fillRandomButton = document.getElementById("fill-random");
 const backToQuestionsButton = document.getElementById("back-to-questions");
 const restartButton = document.getElementById("restart");
 const resultsGrid = document.getElementById("results-grid");
@@ -22,7 +24,7 @@ const insightsGrid = document.getElementById("insights-grid");
 const insightsSummary = document.getElementById("insights-summary");
 const toAnalysisButton = document.getElementById("to-analysis");
 const toInsightsButton = document.getElementById("to-insights");
-const copyResultsButton = document.getElementById("copy-results");
+const shareButtonsContainer = document.getElementById("share-buttons-container");
 const backToResultsButton = document.getElementById("back-to-results");
 const backToQuestionsAnalysisButton = document.getElementById(
   "back-to-questions-analysis"
@@ -274,30 +276,164 @@ const buildResultsMarkdown = () => {
   ].join("\n");
 };
 
-const copyResultsToClipboard = async () => {
+const buildResultsRichText = () => {
+  const scores = getCategoryScores();
+  const summary = getSummaryBlock(scores);
+  
+  const analysisItems = scores.map((category) => {
+    const { label } = getAnalysisLabel(category.sum);
+    return `<li><strong>${category.title}</strong>: ${category.sum} (${label})</li>`;
+  }).join('');
+
+  const insightItems = scores
+    .filter((category) => category.sum <= 10)
+    .map((category) => {
+      const insightData = content.insights[category.id];
+      const label =
+        category.sum <= 6
+          ? content.insightsLabels.reactive
+          : content.insightsLabels.mixed;
+      return `
+        <div style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 8px;">${insightData.title}</h3>
+          <div style="margin-bottom: 8px;"><strong>${content.markdown.scoreLabel}:</strong> ${category.sum} (${label})</div>
+          <ul style="margin: 0; padding-right: 20px;">
+            <li><strong>${content.markdown.insightLabel}:</strong> ${insightData.insight}</li>
+            <li><strong>${content.markdown.actionLabel}:</strong> ${insightData.action}</li>
+          </ul>
+        </div>
+      `;
+    });
+
+  const insightsSection = insightItems.length > 0
+    ? insightItems.join('')
+    : `<p>${content.markdown.allHighMessage}</p>`;
+
+  const summaryItems = summary.items.map((item) => `<li>${item}</li>`).join('');
+
+  return `
+    <h1>${content.markdown.title}</h1>
+    <h2>${content.markdown.categoryScores}</h2>
+    <ul>${analysisItems}</ul>
+    <h2>${content.markdown.personalInsights}</h2>
+    ${insightsSection}
+    <h2>${content.markdown.personalSummary}</h2>
+    <ul>${summaryItems}</ul>
+  `;
+};
+
+const setupShareButtons = () => {
+  if (!shareButtonsContainer) return;
+  
+  const mobile = isMobile();
   const markdown = buildResultsMarkdown();
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(markdown);
-      return;
+  const richText = buildResultsRichText();
+  
+  if (mobile) {
+    // Mobile: Show separate buttons
+    shareButtonsContainer.innerHTML = `
+      <button class="share-btn share-btn-markdown" data-action="copy-markdown" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+        margin-bottom: 12px;
+      ">העתק כטקסט</button>
+      <button class="share-btn share-btn-richtext" data-action="copy-richtext" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+        margin-bottom: 12px;
+      ">העתק מעוצב</button>
+      ${canShare() ? `
+      <button class="share-btn share-btn-native" data-action="share-native" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+      ">שתף</button>
+      ` : ''}
+    `;
+    
+    // Wire up mobile button handlers
+    shareButtonsContainer.querySelector('[data-action="copy-markdown"]')?.addEventListener('click', async () => {
+      await copyAsMarkdown(markdown);
+    });
+    
+    shareButtonsContainer.querySelector('[data-action="copy-richtext"]')?.addEventListener('click', async () => {
+      await copyAsRichText(richText);
+    });
+    
+    if (canShare()) {
+      shareButtonsContainer.querySelector('[data-action="share-native"]')?.addEventListener('click', async () => {
+        try {
+          await shareNative(content.markdown.title, markdown);
+        } catch (error) {
+          // User cancelled or error - silently fail
+        }
+      });
     }
-  } catch (error) {
-    console.warn("Clipboard API failed, falling back to execCommand.", error);
+  } else {
+    // Desktop: Single button (current behavior)
+    shareButtonsContainer.innerHTML = `
+      <button class="share-btn share-btn-desktop" data-action="copy-markdown" style="
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+      ">העתק תוצאות</button>
+    `;
+    
+    shareButtonsContainer.querySelector('[data-action="copy-markdown"]')?.addEventListener('click', async () => {
+      await copyAsMarkdown(markdown);
+    });
   }
-  const textarea = document.createElement("textarea");
-  textarea.value = markdown;
-  textarea.setAttribute("readonly", "true");
-  textarea.style.position = "absolute";
-  textarea.style.left = "-9999px";
-  document.body.appendChild(textarea);
-  textarea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textarea);
 };
 
 const initApp = async () => {
+  // Add test mode indicator if active
+  if (isTestMode()) {
+    insertTestModeIndicator();
+    updateBackLinks();
+  }
+  
   content = await fetch("./content.json").then((r) => r.json());
   answers = new Array(content.questions.length).fill(null);
+  
+  // If test mode is active, fill random answers and show results immediately
+  if (isTestMode()) {
+    fillRandomAnswers();
+    showResults();
+    updateScreen(resultsScreen);
+  }
 
   scoreInputs.forEach((input) => {
     input.addEventListener("change", (event) => {
@@ -330,12 +466,6 @@ const initApp = async () => {
     updateScreen(questionScreen);
   });
 
-  fillRandomButton.addEventListener("click", () => {
-    fillRandomAnswers();
-    showResults();
-    updateScreen(resultsScreen);
-  });
-
   restartButton.addEventListener("click", () => {
     answers.fill(null);
     scoreInputs.forEach((input) => {
@@ -356,11 +486,8 @@ const initApp = async () => {
 
   toInsightsButton.addEventListener("click", () => {
     showInsights();
+    setupShareButtons();
     updateScreen(insightsScreen);
-  });
-
-  copyResultsButton.addEventListener("click", () => {
-    copyResultsToClipboard();
   });
 
   backToResultsButton.addEventListener("click", () => {

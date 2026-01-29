@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "שאלון אסרטיביות",
-    "description": "אבחון עצמי של רמת האסרטיביות שלך"
+    "description": "בדוק את רמת התקיפות שלך"
   },
   "intro": {
     "title": "שאלון אסרטיביות (תקיפות)",
@@ -113,8 +113,8 @@
   "scoring": {
     "description": "סכם את סך כל המספרים שהקפת ועבור/י לניתוח התוצאות.",
     "calculation": {
-      "totalMultiplier": 5,
-      "explanation": "סכום כל התשובות כפול 5 = ציון באחוזים"
+      "totalMultiplier": 1,
+      "explanation": "סכום כל התשובות (20-100) = ציון באחוזים"
     }
   },
   "scoreRanges": [

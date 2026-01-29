@@ -3,6 +3,9 @@
 // All Hebrew text loaded from content.json
 // ═══════════════════════════════════════════════════════════════════════════
 
+import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../lib/testmode.js';
+import { isMobile, copyAsMarkdown, copyAsRichText, shareNative, canShare, createShareButtons } from '../lib/share.js';
+
 let content = null;
 let currentIndex = 0;
 let answers = [];
@@ -25,12 +28,10 @@ const answerNo = document.getElementById("answer-no");
 const nextButton = document.getElementById("next");
 const prevButton = document.getElementById("prev");
 const startButton = document.getElementById("start");
-const fillRandomButton = document.getElementById("fill-random");
 
 const restartButton = document.getElementById("restart");
 const backToQuestionsButton = document.getElementById("back-to-questions");
 const toAnalysisButton = document.getElementById("to-analysis");
-const copyResultsButton = document.getElementById("copy-results");
 const backToResultsButton = document.getElementById("back-to-results");
 const backToQuestionsAnalysisButton = document.getElementById("back-to-questions-analysis");
 
@@ -45,6 +46,15 @@ async function init() {
     answers = new Array(content.questions.length).fill(null);
     populateUI();
     setupEventListeners();
+    
+    // Test mode integration
+    if (isTestMode()) {
+      insertTestModeIndicator();
+      updateBackLinks();
+      fillRandomAnswers();
+      showResults();
+      updateScreen(resultsScreen);
+    }
   } catch (error) {
     console.error("Failed to load content:", error);
   }
@@ -57,12 +67,13 @@ function populateUI() {
 
   // Button labels
   startButton.textContent = content.ui.start;
-  fillRandomButton.textContent = content.ui.fillRandom;
   answerYes.textContent = content.ui.yes;
   answerNo.textContent = content.ui.no;
   restartButton.textContent = content.ui.restart;
   toAnalysisButton.textContent = content.ui.toAnalysis;
-  copyResultsButton.textContent = content.ui.copyResults;
+  
+  // Setup share buttons
+  setupShareButtons();
 
   // Results screen
   document.getElementById("results-title").textContent = content.results.title;
@@ -281,25 +292,96 @@ function buildResultsMarkdown() {
   return lines.join("\n");
 }
 
-async function copyResultsToClipboard() {
-  const markdown = buildResultsMarkdown();
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(markdown);
-      return;
-    }
-  } catch (error) {
-    console.warn("Clipboard API failed, falling back to execCommand.", error);
+function buildResultsHTML() {
+  const scores = getTypeScores();
+  const sorted = getSortedTypes(scores);
+  const dominantTypes = sorted.slice(0, 2);
+  const minorTypes = sorted.slice(2, 4);
+
+  let html = '<h1>תוצאות שאלון סגנונות תקשורת</h1>';
+  html += '<h2>ציונים לפי סגנון</h2>';
+  html += '<ul>';
+  sorted.forEach((type) => {
+    html += `<li><strong>${type.title}</strong>: ${type.score}/10</li>`;
+  });
+  html += '</ul>';
+  
+  html += '<hr>';
+  html += '<h2>הסגנונות הדומיננטיים שלך</h2>';
+  
+  dominantTypes.forEach((type, index) => {
+    html += `<h3>${index + 1}. ${type.title} (${type.score}/10)</h3>`;
+    html += `<p>${type.description.summary}</p>`;
+    html += '<h4>מאפיינים עיקריים:</h4>';
+    html += '<ul>';
+    type.description.traits.forEach((trait) => {
+      html += `<li>${trait}</li>`;
+    });
+    html += '</ul>';
+  });
+  
+  html += '<hr>';
+  html += '<h2>סגנונות משניים</h2>';
+  html += '<ul>';
+  minorTypes.forEach((type) => {
+    html += `<li><strong>${type.title}</strong>: ${type.score}/10</li>`;
+  });
+  html += '</ul>';
+  
+  return html;
+}
+
+function setupShareButtons() {
+  // Only add share buttons to the analysis screen (not results screen)
+  const analysisActions = document.querySelector('#analysis .results-actions');
+  
+  if (!analysisActions) return;
+  
+  // Create share buttons HTML
+  const shareButtonsHTML = createShareButtons({
+    copyMarkdown: "העתק כטקסט",
+    copyRichText: "העתק מעוצב",
+    share: "שתף",
+    copyResults: content.ui.copyResults || "העתק תוצאות"
+  });
+  
+  // Add share buttons to analysis screen (replace copy-results button)
+  const analysisCopyBtn = analysisActions.querySelector('#copy-results');
+  if (analysisCopyBtn) {
+    const shareContainer = document.createElement('div');
+    shareContainer.className = 'share-buttons-container';
+    shareContainer.innerHTML = shareButtonsHTML;
+    analysisCopyBtn.replaceWith(shareContainer);
   }
-  const textarea = document.createElement("textarea");
-  textarea.value = markdown;
-  textarea.setAttribute("readonly", "true");
-  textarea.style.position = "absolute";
-  textarea.style.left = "-9999px";
-  document.body.appendChild(textarea);
-  textarea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textarea);
+  
+  // Setup event listeners for share buttons
+  setupShareEventListeners();
+}
+
+function setupShareEventListeners() {
+  // Use event delegation for dynamically created buttons
+  document.addEventListener('click', async (e) => {
+    const action = e.target.closest('[data-action]')?.getAttribute('data-action');
+    if (!action) return;
+    
+    const markdown = buildResultsMarkdown();
+    const html = buildResultsHTML();
+    
+    try {
+      if (action === 'copy-markdown') {
+        await copyAsMarkdown(markdown);
+      } else if (action === 'copy-richtext') {
+        await copyAsRichText(html);
+      } else if (action === 'share-native') {
+        await shareNative(
+          content.meta?.title || 'תוצאות שאלון סגנונות תקשורת',
+          markdown.replace(/#{1,3}\s/g, '').replace(/\*\*/g, '').substring(0, 200) + '...'
+        );
+      }
+    } catch (error) {
+      console.error('Share action failed:', error);
+    }
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -338,13 +420,6 @@ function setupEventListeners() {
     updateScreen(questionScreen);
   });
 
-  // Debug fill
-  fillRandomButton.addEventListener("click", () => {
-    fillRandomAnswers();
-    showResults();
-    updateScreen(resultsScreen);
-  });
-
   // Restart
   restartButton.addEventListener("click", () => {
     answers.fill(null);
@@ -372,11 +447,6 @@ function setupEventListeners() {
   backToResultsButton.addEventListener("click", () => {
     showResults();
     updateScreen(resultsScreen);
-  });
-
-  // Copy results
-  copyResultsButton.addEventListener("click", () => {
-    copyResultsToClipboard();
   });
 }
 

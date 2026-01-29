@@ -3,6 +3,9 @@
 // All Hebrew text loaded from content.json
 // ═══════════════════════════════════════════════════════════════════════════
 
+import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../lib/testmode.js';
+import { isMobile, copyAsMarkdown, copyAsRichText, shareNative, canShare } from '../lib/share.js';
+
 let content = null;
 let currentIndex = 0;
 let answers = [];
@@ -25,10 +28,9 @@ const scoreInputs = Array.from(document.querySelectorAll("input[name='score']"))
 const nextButton = document.getElementById("next");
 const prevButton = document.getElementById("prev");
 const startButton = document.getElementById("start");
-const fillRandomButton = document.getElementById("fill-random");
 const restartButton = document.getElementById("restart");
 const backToQuestionsButton = document.getElementById("back-to-questions");
-const copyResultsButton = document.getElementById("copy-results");
+const shareButtonsContainer = document.getElementById("share-buttons-container");
 
 const resultsTitle = document.getElementById("results-title");
 const resultsSubtitle = document.getElementById("results-subtitle");
@@ -46,12 +48,25 @@ const updateScreen = (screen) => {
 };
 
 const initApp = async () => {
+  // Add test mode indicator if active
+  if (isTestMode()) {
+    insertTestModeIndicator();
+    updateBackLinks();
+  }
+  
   try {
     const response = await fetch("./content.json");
     content = await response.json();
     answers = new Array(content.questions.length).fill(null);
     populateUI();
     setupEventListeners();
+    
+    // If test mode is active, fill random answers and show results immediately
+    if (isTestMode()) {
+      fillRandomAnswers();
+      showResults();
+      updateScreen(resultsScreen);
+    }
   } catch (error) {
     console.error("Failed to load content:", error);
   }
@@ -77,9 +92,7 @@ const populateUI = () => {
 
   // Button labels
   startButton.textContent = content.ui.start;
-  fillRandomButton.textContent = content.ui.fillRandom;
   restartButton.textContent = content.ui.restart;
-  copyResultsButton.textContent = content.ui.copyResults;
 
   // Results screen
   resultsTitle.textContent = content.results.title;
@@ -229,6 +242,9 @@ const showResults = () => {
   }
 
   resultsInterpretation.appendChild(interpretationDiv);
+  
+  // Setup share buttons after showing results
+  setupShareButtons();
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -278,25 +294,136 @@ const buildResultsMarkdown = () => {
   return lines.join("\n");
 };
 
-const copyResultsToClipboard = async () => {
-  const markdown = buildResultsMarkdown();
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(markdown);
-      return;
-    }
-  } catch (error) {
-    console.warn("Clipboard API failed, falling back to execCommand.", error);
+const buildResultsRichText = () => {
+  const scores = getCategoryScores();
+  const { highest, isTie, sorted, topDrivers } = getHighestDriver(scores);
+  const allLow = allScoresBelow12(scores);
+  
+  let html = `<h1>${content.markdown.title}</h1>`;
+  html += `<h2>${content.markdown.categoryScores}</h2>`;
+  html += '<ul>';
+  
+  scores.forEach((category) => {
+    const isTopDriver = topDrivers.some((d) => d.id === category.id);
+    const marker = isTopDriver ? ' ⭐' : '';
+    html += `<li><strong>${category.title}</strong>: ${category.sum}${marker}</li>`;
+  });
+  
+  html += '</ul><hr>';
+  
+  if (allLow) {
+    html += `<h2>${content.results.lowScores}</h2>`;
+    html += `<p>${content.results.lowScoresAction}</p>`;
+    html += `<p><strong>${content.results.worthIt}</strong></p>`;
+  } else {
+    html += '<h2>מנועי המחוברות המובילים שלך</h2>';
+    topDrivers.forEach((driver) => {
+      html += `<h3>${driver.title} (${driver.sum})</h3>`;
+      html += `<p>${driver.description}</p>`;
+    });
+    html += `<p>${content.results.highestDriverNote}</p>`;
+    html += `<p>${content.results.sharedResponsibility}</p>`;
+    html += `<p>${content.results.actionPlan}</p>`;
+    html += `<p><strong>${content.results.worthIt}</strong></p>`;
   }
-  const textarea = document.createElement("textarea");
-  textarea.value = markdown;
-  textarea.setAttribute("readonly", "true");
-  textarea.style.position = "absolute";
-  textarea.style.left = "-9999px";
-  document.body.appendChild(textarea);
-  textarea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textarea);
+  
+  return html;
+};
+
+const setupShareButtons = () => {
+  if (!shareButtonsContainer) return;
+  
+  const mobile = isMobile();
+  const markdown = buildResultsMarkdown();
+  const richText = buildResultsRichText();
+  
+  if (mobile) {
+    // Mobile: Show separate buttons
+    shareButtonsContainer.innerHTML = `
+      <button class="share-btn share-btn-markdown" data-action="copy-markdown" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+        margin-bottom: 12px;
+      ">העתק כטקסט</button>
+      <button class="share-btn share-btn-richtext" data-action="copy-richtext" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+        margin-bottom: 12px;
+      ">העתק מעוצב</button>
+      ${canShare() ? `
+      <button class="share-btn share-btn-native" data-action="share-native" style="
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+      ">שתף</button>
+      ` : ''}
+    `;
+    
+    // Add event listeners for mobile buttons
+    shareButtonsContainer.querySelector('[data-action="copy-markdown"]')?.addEventListener('click', async () => {
+      await copyAsMarkdown(markdown);
+    });
+    
+    shareButtonsContainer.querySelector('[data-action="copy-richtext"]')?.addEventListener('click', async () => {
+      await copyAsRichText(richText);
+    });
+    
+    if (canShare()) {
+      shareButtonsContainer.querySelector('[data-action="share-native"]')?.addEventListener('click', async () => {
+        try {
+          await shareNative(content.markdown.title, markdown);
+        } catch (error) {
+          // User cancelled or error occurred - silently fail
+        }
+      });
+    }
+  } else {
+    // Desktop: Single button (current behavior)
+    shareButtonsContainer.innerHTML = `
+      <button class="share-btn share-btn-desktop" data-action="copy-markdown" style="
+        padding: 12px 24px;
+        background: var(--primary, #4c66ff);
+        color: white;
+        border: none;
+        border-radius: var(--radius-pill, 999px);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-stack, 'Heebo', 'Assistant', 'Segoe UI', sans-serif);
+        transition: opacity 0.2s;
+      ">${content.ui.copyResults}</button>
+    `;
+    
+    shareButtonsContainer.querySelector('[data-action="copy-markdown"]')?.addEventListener('click', async () => {
+      await copyAsMarkdown(markdown);
+    });
+  }
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -338,13 +465,6 @@ const setupEventListeners = () => {
     updateScreen(questionScreen);
   });
 
-  // Debug fill
-  fillRandomButton.addEventListener("click", () => {
-    fillRandomAnswers();
-    showResults();
-    updateScreen(resultsScreen);
-  });
-
   // Restart
   restartButton.addEventListener("click", () => {
     answers.fill(null);
@@ -358,11 +478,6 @@ const setupEventListeners = () => {
   backToQuestionsButton.addEventListener("click", () => {
     updateQuestion();
     updateScreen(questionScreen);
-  });
-
-  // Copy results
-  copyResultsButton.addEventListener("click", () => {
-    copyResultsToClipboard();
   });
 };
 

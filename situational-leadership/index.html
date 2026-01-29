@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>שאלון ניהול מצבי - אבחון עצמי</title>
+    <title>שאלון ניהול מצבי</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap"
       rel="stylesheet"
@@ -33,7 +33,7 @@
           </ul>
           <div class="actions actions--center">
             <button class="primary" id="start">מתחילים</button>
-            <button class="ghost" id="fill-random">מילוי בדיקה אוטומטי</button>
+            <a href="../" class="ghost">חזרה למרכז השאלונים</a>
           </div>
         </section>
 
@@ -78,13 +78,13 @@
           <div class="analysis-content" id="analysis-content"></div>
           <div class="actions results-actions">
             <button class="ghost" id="back-to-results">חזרה לתוצאות</button>
-            <button class="primary" id="copy-results">העתק תוצאות</button>
+            <div id="share-buttons-container"></div>
             <button class="ghost" id="back-to-questions-analysis">חזרה לשאלות</button>
           </div>
         </section>
       </main>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>

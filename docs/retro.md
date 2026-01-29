@@ -164,3 +164,39 @@ Start learnning about cursor commands/skills, in addition to rules.
 - Template decision criteria could be extracted to a general rule for any project
 - The "analyze before refactor" pattern is useful beyond questionnaires
 
+---
+
+## Session: 2026-01-29 - Parallel Feature Implementation (P2.5 + P3.1)
+
+### What We Did
+- Implemented P2.5 (Enhanced Share) and P3.1 (Test Mode) across all 7 questionnaires
+- Created `lib/testmode.js` - test mode detection, URL params, visual indicator
+- Created `lib/share.js` - multi-format copy (Markdown, Rich Text, Web Share API)
+- Added test mode toggle to hub header
+- Added privacy statement to hub footer
+- Added "back to hub" buttons on all questionnaire intro screens
+- Removed legacy "מילוי אקראי" debug buttons from all questionnaires
+- Removed "אבחון עצמי" text from all titles and content
+
+### Decisions Made
+- **Desktop vs Mobile share UI** - Desktop: single button (Markdown only). Mobile: separate buttons for each format
+- **Test mode indicator position** - Scrolls with content (not fixed), centered near title
+- **Test mode persistence** - URL param `?testmode=1` propagates through back links
+- **Visual feedback on copy** - Subtle toast "הועתק!" appears briefly after copy action
+
+### Workflow Observations
+- Queue-based parallel execution worked well - spawning tasks as dependencies cleared
+- User screenshot feedback was essential for catching visual inconsistencies (badge heights, button radius)
+- Converting all questionnaires to ES modules (`type="module"`) was required for lib imports
+- Having shared libs (`lib/`) reduced per-questionnaire code significantly
+
+### Bugs Fixed During Session
+- Engagement Drivers UI broken (missing `type="module"` in script tag)
+- Assertiveness percentage > 100% (incorrect `totalMultiplier` in content.json)
+- Managerial Courage button not working (stale DOM references in app.js)
+- Test mode not persisting when returning to hub (added `updateBackLinks()`)
+
+### Rule Candidates
+- Checklist item: verify script tags have `type="module"` when using ES imports
+- Pattern: URL param persistence for cross-page state (cleaner than localStorage for testing features)
+

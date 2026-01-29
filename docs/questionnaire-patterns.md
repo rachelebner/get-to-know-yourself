@@ -153,4 +153,4 @@ When creating a new template:
 
 - `_templates/likert-categories/README.md` - First template implementation
 - `docs/design.md` - Overall architecture and templates section
-- `docs/parallel-process.md` - Batch processing workflow
+- `docs/parallel-process.md` - Parallel processing workflow

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>שלושת מעגלי המנהיגות והניהול - אבחון עצמי</title>
+    <title>שלושת מעגלי המנהיגות והניהול</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap"
       rel="stylesheet"
@@ -35,7 +35,7 @@
           </ul>
           <div class="actions actions--center">
             <button class="primary" id="start">מתחילים</button>
-            <button class="ghost" id="fill-random">מילוי בדיקה אוטומטי</button>
+            <a href="../" class="ghost">חזרה למרכז השאלונים</a>
           </div>
         </section>
 
@@ -93,13 +93,13 @@
           <div class="details" id="details-grid"></div>
           <div class="actions results-actions">
             <button class="ghost" id="back-to-results">חזרה לתוצאות</button>
-            <button class="primary" id="copy-results">העתק תוצאות</button>
+            <div id="share-buttons-container"></div>
             <button class="ghost" id="back-to-questions-details">חזרה לשאלות</button>
           </div>
         </section>
       </main>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>
