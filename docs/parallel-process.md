@@ -1,235 +1,198 @@
-# Parallel Questionnaire Processing Workflow
+# Parallel Feature Processing Workflow
 
 ## Overview
 
-Process multiple questionnaires from source documents to deployed code, working in parallel where possible.
+Process multiple features/tasks in parallel using a queue-based approach. Tasks are spawned as slots become available (max 3 concurrent).
 
 ---
 
-## Directory Structure
+## Related Workflow Rules
+
+| Rule | When to Use |
+|------|-------------|
+| `.cursor/rules/racheli/workflow/quick-ui-start.mdc` | Starting a new feature branch |
+| `_inbox/quick-ui-cleanup.mdc` | Before finishing any task |
+| `.cursor/rules-src/workflow/quick-ui-finish.md` | Completing and merging a feature |
+
+---
+
+## When to Use Parallel Processing
+
+**Use when:**
+- 3+ independent tasks need implementation
+- Tasks have minimal file overlap
+- Tasks can be reviewed/tested independently
+
+**Don't use when:**
+- Tasks are highly interdependent
+- Only 1-2 small tasks
+- Tasks require sequential feedback loops
+
+---
+
+## Feature Plan Input Format
+
+Before starting parallel execution, provide a feature plan in this format:
 
 ```
-get-to-know-yourself/
-├── _inbox/                     # Temp upload location for source documents
-│   ├── questionnaire-a.pdf
-│   ├── questionnaire-b.docx
-│   └── ...
-├── communication-styles/       # Existing
-├── proactiveness/              # Existing
-├── situational-leadership/     # Existing
-└── [new-questionnaire]/        # Created per workflow
+FEATURE PLAN: [name]
+MAX CONCURRENT: [N]
+
+TASKS:
+- [ID]: [description]
+  SCOPE: [files/folders this task can modify]
+  DEPENDS: [task IDs, or "none"]
+
+- [ID]: [description]
+  SCOPE: [files/folders]
+  DEPENDS: [task IDs, or "none"]
 ```
 
-**Worktrees (parallel branches):**
+**Example:**
 ```
-get-to-know-yourself-[name]/    # One worktree per questionnaire
+FEATURE PLAN: P2-P3 Features
+MAX CONCURRENT: 3
+
+TASKS:
+- F1: Create test mode library
+  SCOPE: lib/testmode.js, index.html (hub header only)
+  DEPENDS: none
+
+- F2: Create share library  
+  SCOPE: lib/share.js
+  DEPENDS: none
+
+- I1: Integrate features into proactiveness
+  SCOPE: proactiveness/
+  DEPENDS: F1, F2
+
+- I2: Integrate features into communication-styles
+  SCOPE: communication-styles/
+  DEPENDS: F1, F2
+```
+
+**Rules:**
+- Tasks with `DEPENDS: none` can start immediately
+- Tasks wait until all dependencies complete
+- Two tasks cannot have overlapping SCOPE
+
+---
+
+## Queue-Based Execution
+
+```
+QUEUE: [T1] [T2] [T3] [T4] [T5] [T6] [T7]
+       ─────────────────────────────────►
+
+SLOTS (max 3):
+  [T1 running] [T2 running] [T3 running]
+       │
+       ▼ T1 completes
+  [T4 running] [T2 running] [T3 running]
+```
+
+**Rules:**
+1. Start with up to 3 tasks
+2. When one completes, spawn next from queue
+3. Continue until queue empty
+
+---
+
+## Task Lifecycle
+
+### 1. Start Task
+Follow `quick-ui-start.mdc`:
+- Create branch `ui/<feature-name>` or work in main
+- Clear scope: which files this task can modify
+
+### 2. Implement
+- Stay within file boundaries
+- Commit incrementally
+- Self-test before marking complete
+
+### 3. Cleanup
+Follow `quick-ui-cleanup.mdc`:
+- Remove redundancies
+- Update documentation
+- Verify no lint errors
+
+### 4. Complete
+Follow `quick-ui-finish.md`:
+- Push changes
+- Merge to main (sequential, one at a time)
+- Mark task done, spawn next
+
+---
+
+## File Boundaries
+
+Prevent conflicts by assigning clear file ownership:
+
+| Task Type | Owns | Can Read |
+|-----------|------|----------|
+| Foundation (lib/) | `lib/[feature].js` | Any |
+| Integration | `[questionnaire]/` folder | `lib/`, `shared.css` |
+| Hub changes | `index.html`, `styles.css` | Any |
+
+**Rule:** Two tasks should never modify the same file simultaneously.
+
+---
+
+## Concurrency Guidelines
+
+| Queue Size | Max Concurrent | Notes |
+|------------|----------------|-------|
+| 2-3 tasks | 2 | Low overhead |
+| 4-6 tasks | 3 | Good balance |
+| 7-10 tasks | 3-4 | Cap at 3 for safety |
+| 10+ tasks | 3 | Process in waves |
+
+---
+
+## Communication Pattern
+
+```
+User: "Start feature queue"
+Agent: "Starting T1, T2, T3 (3 slots)"
+       [implements T1, T2, T3]
+Agent: "T1 complete. Starting T4."
+       "T2 complete. Starting T5."
+       [continues until queue empty]
+Agent: "All tasks complete. Ready to merge?"
 ```
 
 ---
 
-## Workflow Phases
+## Feature Specifications
 
-### Phase 0: Setup (Once)
+Store lightweight specs in `docs/features/`:
 
-1. Create `_inbox/` folder in main repo
-2. User uploads all source documents to `_inbox/`
-3. Agent reviews documents, proposes folder names
+```
+docs/features/
+└── [feature-id]-[name].md
+```
 
-**Deliverable:** List of questionnaires with proposed names
+Each file: brief description, UI notes, implementation hints.
 
 ---
 
-### Phase 1: Worktree Creation (Parallel)
-
-For each questionnaire:
+## Quick Reference
 
 ```bash
-# From main repo
-git checkout main && git pull origin main
-git worktree add ../get-to-know-yourself-[name] -b ui/[name]
+# Create feature branch
+git checkout -b ui/<feature-name>
+
+# Merge after completion
+git checkout main && git merge ui/<feature-name>
+
+# Cleanup branch
+git branch -d ui/<feature-name>
 ```
 
-**Naming convention:** 
-- Branch: `ui/[short-name]` (e.g., `ui/values-assessment`)
-- Worktree: `get-to-know-yourself-[short-name]`
-- Folder: `/[short-name]/` in repo
-
-**Deliverable:** 4 worktrees ready for parallel work
-
 ---
 
-### Phase 2: Content Extraction (Parallel)
+## See Also
 
-For each questionnaire:
-
-1. Move source doc from `_inbox/` to questionnaire folder
-2. Create `content.json` with:
-   - Questions extracted from source
-   - Answer options/scales
-   - Scoring rules
-   - Result categories/interpretations
-3. Create `README.md` documenting:
-   - Questionnaire structure
-   - Scoring algorithm
-   - Special handling notes
-
-**Deliverable:** `content.json` + `README.md` per questionnaire
-
----
-
-### Phase 3: Implementation (Parallel)
-
-For each questionnaire:
-
-1. Create standard file structure:
-   ```
-   [questionnaire]/
-   ├── index.html
-   ├── styles.css
-   ├── app.js
-   ├── content.json
-   └── README.md
-   ```
-
-2. Implement screens:
-   - Intro screen (instructions)
-   - Question screens (with navigation)
-   - Results screen(s)
-   - Analysis screens (if applicable)
-
-3. Follow existing patterns from `proactiveness/` or `communication-styles/`
-
-**Deliverable:** Working questionnaire app
-
----
-
-### Phase 4: Review (Sequential per questionnaire)
-
-For each questionnaire:
-
-1. **Self-review checklist:**
-   - [ ] All questions match source document
-   - [ ] Scoring logic correct
-   - [ ] RTL layout works
-   - [ ] Mobile responsive
-   - [ ] "העתק תוצאות" works
-   - [ ] Navigation (prev/next/back to hub) works
-
-2. **User review:**
-   - Run locally, complete questionnaire
-   - Verify results match expected scoring
-   - Flag any content/UX issues
-
-**Deliverable:** Review feedback addressed
-
----
-
-### Phase 5: Testing (Parallel)
-
-For each questionnaire:
-
-1. Full walkthrough with various answer patterns
-2. Edge cases (all min, all max, mixed)
-3. Mobile device testing
-4. Copy results and verify markdown format
-
-**Deliverable:** Test confirmation
-
----
-
-### Phase 6: Merge (Sequential)
-
-For each questionnaire (one at a time to avoid conflicts):
-
-```bash
-# In worktree
-git add -A
-git commit -m "feat: Add [questionnaire-name] questionnaire"
-git push -u origin ui/[name]
-
-# Create PR or merge directly
-git checkout main
-git merge ui/[name]
-git push origin main
-
-# Cleanup worktree
-git worktree remove ../get-to-know-yourself-[name]
-git branch -d ui/[name]
-```
-
-Update hub `index.html` to include new questionnaire card.
-
-**Deliverable:** Questionnaire live on main
-
----
-
-## Parallelization Strategy
-
-| Phase | Parallel? | Notes |
-|-------|-----------|-------|
-| 0. Setup | No | One-time setup |
-| 1. Worktree creation | Yes | All 4 at once |
-| 2. Content extraction | Yes | All 4 at once |
-| 3. Implementation | Yes | All 4 at once (different worktrees) |
-| 4. Review | Mixed | Can review multiple, but user time is serial |
-| 5. Testing | Yes | All 4 at once |
-| 6. Merge | No | One at a time to avoid conflicts |
-
----
-
-## Agent Task Batching
-
-When working with agent, batch requests by phase:
-
-**Good:** "Extract content for all 4 questionnaires"  
-**Good:** "Create worktrees for: values, strengths, team-roles, conflict-styles"  
-**Less efficient:** "Do everything for questionnaire A, then B, then C, then D"
-
----
-
-## Handoff Points
-
-Clear handoff between user and agent:
-
-| Step | Owner | Handoff |
-|------|-------|---------|
-| Upload source docs | User | "Documents uploaded to _inbox/" |
-| Review proposed names | User | "Names approved" or "Change X to Y" |
-| Review extracted content | User | "Content verified" or "Fix question 5" |
-| Test completed app | User | "Approved" or "Issues: ..." |
-| Final approval | User | "Merge it" |
-
----
-
-## Status Tracking
-
-| Questionnaire | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Phase 5 | Phase 6 |
-|---------------|---------|---------|---------|---------|---------|---------|
-| engagement-drivers | [x] | [x] | [x] | [ ] | [ ] | [ ] |
-| leadership-circles | [x] | [x] | [x] | [ ] | [ ] | [ ] |
-| managerial-courage | [x] | [x] | [x] | [ ] | [ ] | [ ] |
-| assertiveness | [x] | [x] | [x] | [ ] | [ ] | [ ] |
-
-**Last updated:** 2026-01-28
-
-**Notes:**
-- All 4 worktrees created and committed
-- Awaiting user review (Phase 4) before testing and merge
-
----
-
-## Quick Commands Reference
-
-```bash
-# List all worktrees
-git worktree list
-
-# Switch to worktree
-cd ../get-to-know-yourself-[name]
-
-# Check branch status
-git status
-
-# Remove worktree after merge
-git worktree remove ../get-to-know-yourself-[name]
-```
+- `docs/features/` — Individual feature specifications
+- `docs/questionnaire-patterns.md` — Questionnaire-specific patterns
+- `docs/qa-review-checklist.md` — QA review checklist

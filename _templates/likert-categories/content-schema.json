@@ -1,0 +1,237 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Likert + Categories Questionnaire Content Schema",
+  "description": "Schema for content.json files used with the likert-categories template",
+  "type": "object",
+  "required": ["meta", "intro", "ui", "questions", "categories", "results", "markdown"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Questionnaire metadata",
+      "required": ["title", "description"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Full questionnaire title"
+        },
+        "description": {
+          "type": "string",
+          "description": "Short description for SEO/sharing"
+        }
+      }
+    },
+
+    "config": {
+      "type": "object",
+      "description": "Template configuration options",
+      "properties": {
+        "hasAnalysisScreen": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, shows Results → Analysis screen flow"
+        },
+        "interpretationMode": {
+          "type": "string",
+          "enum": ["simple", "tiered"],
+          "default": "simple",
+          "description": "simple: highest wins. tiered: low/medium/high based on scoreRange"
+        },
+        "showScaleLabelsInline": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, shows short labels under scale numbers"
+        }
+      }
+    },
+
+    "intro": {
+      "type": "object",
+      "description": "Intro screen content",
+      "required": ["title", "instructions", "scaleLabels"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Intro screen heading"
+        },
+        "instructions": {
+          "type": "string",
+          "description": "Instructions text"
+        },
+        "scaleLabels": {
+          "type": "object",
+          "description": "Scale value labels (1-5)",
+          "properties": {
+            "1": { "type": "string" },
+            "2": { "type": "string" },
+            "3": { "type": "string" },
+            "4": { "type": "string" },
+            "5": { "type": "string" }
+          },
+          "required": ["1", "2", "3", "4", "5"]
+        },
+        "note": {
+          "type": "string",
+          "description": "Optional note/disclaimer shown after scale labels"
+        }
+      }
+    },
+
+    "ui": {
+      "type": "object",
+      "description": "UI button and navigation labels",
+      "required": ["start", "next", "prev", "backToIntro", "finish", "copyResults", "restart", "questionOf"],
+      "properties": {
+        "start": { "type": "string", "default": "התחל" },
+        "next": { "type": "string", "default": "הבא" },
+        "prev": { "type": "string", "default": "חזרה" },
+        "backToIntro": { "type": "string", "default": "חזרה להנחיות" },
+        "finish": { "type": "string", "default": "סיום" },
+        "toResults": { "type": "string", "default": "לתוצאות" },
+        "toAnalysis": { "type": "string", "default": "לניתוח מפורט" },
+        "copyResults": { "type": "string", "default": "העתק תוצאות" },
+        "restart": { "type": "string", "default": "התחל מחדש" },
+        "backToHub": { "type": "string", "default": "חזרה למרכז השאלונים" },
+        "backToQuestions": { "type": "string", "default": "חזרה לשאלות" },
+        "backToResults": { "type": "string", "default": "חזרה לתוצאות" },
+        "questionOf": { 
+          "type": "string", 
+          "default": "שאלה {current} מתוך {total}",
+          "description": "Template with {current} and {total} placeholders"
+        },
+        "fillRandom": { "type": "string", "default": "מילוי אקראי (בדיקה)" }
+      }
+    },
+
+    "questions": {
+      "type": "array",
+      "description": "Array of questions",
+      "items": {
+        "type": "object",
+        "required": ["id", "text"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Question ID (1-indexed)"
+          },
+          "text": {
+            "type": "string",
+            "description": "Question text (Hebrew)"
+          }
+        }
+      }
+    },
+
+    "categories": {
+      "type": "array",
+      "description": "Categories for scoring",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "questions"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Category ID (kebab-case)"
+          },
+          "title": {
+            "type": "string",
+            "description": "Category display title"
+          },
+          "questions": {
+            "type": "array",
+            "items": { "type": "integer" },
+            "description": "Array of question IDs in this category"
+          },
+          "description": {
+            "type": "string",
+            "description": "Short description shown in results (for simple mode)"
+          },
+          "scoreRange": {
+            "type": "array",
+            "items": { "type": "integer" },
+            "minItems": 2,
+            "maxItems": 2,
+            "description": "[min, max] possible score for this category"
+          },
+          "interpretation": {
+            "type": "object",
+            "description": "Tiered interpretation text (for tiered mode)",
+            "properties": {
+              "low": { "type": "string" },
+              "medium": { "type": "string" },
+              "high": { "type": "string" }
+            },
+            "required": ["low", "medium", "high"]
+          }
+        }
+      }
+    },
+
+    "results": {
+      "type": "object",
+      "description": "Results screen content",
+      "required": ["title"],
+      "properties": {
+        "title": { "type": "string", "description": "Results screen heading" },
+        "subtitle": { "type": "string", "description": "Results screen subheading" },
+        "modelContext": { 
+          "type": "string", 
+          "description": "Optional context box explaining the model/framework" 
+        },
+        "dominantBadge": { 
+          "type": "string", 
+          "description": "Badge text for dominant category (e.g., 'מנוע מחוברות מוביל')" 
+        },
+        "interpretationTitle": { 
+          "type": "string", 
+          "description": "Title for interpretation section" 
+        },
+        "note": { "type": "string", "description": "General note about results" },
+        "actionPlan": { "type": "string", "description": "Suggested action plan text" },
+        "worthIt": { "type": "string", "description": "Motivational closing text" },
+        "allLowThreshold": { 
+          "type": "integer", 
+          "description": "Score threshold for 'all low' case (optional)" 
+        },
+        "lowScores": { 
+          "type": "string", 
+          "description": "Title when all scores below threshold" 
+        },
+        "lowScoresAction": { 
+          "type": "string", 
+          "description": "Action text when all scores below threshold" 
+        }
+      }
+    },
+
+    "analysis": {
+      "type": "object",
+      "description": "Analysis screen content (if hasAnalysisScreen = true)",
+      "properties": {
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "dominantTitle": { "type": "string" },
+        "developmentTitle": { "type": "string" },
+        "reflectionTitle": { "type": "string", "default": "שאלות לרפלקציה" },
+        "reflectionQuestions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Array of reflection questions to display"
+        }
+      }
+    },
+
+    "markdown": {
+      "type": "object",
+      "description": "Labels for Markdown export",
+      "required": ["title", "categoryScores"],
+      "properties": {
+        "title": { "type": "string", "description": "Markdown document title" },
+        "categoryScores": { "type": "string", "default": "ציונים לפי קטגוריה" },
+        "dominantTitle": { "type": "string", "default": "הקטגוריות הדומיננטיות" },
+        "developmentAreas": { "type": "string", "default": "אזורי פיתוח" },
+        "scoreLabel": { "type": "string", "default": "ציון" },
+        "descriptionLabel": { "type": "string", "default": "תיאור" }
+      }
+    }
+  }
+}
