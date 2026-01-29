@@ -598,6 +598,19 @@ Google Fonts loaded via CSS `@import` or `<link>`:
 
 ---
 
+## Git / Version Control
+
+**Do NOT commit `.cursor/` symlinks or folders to GitHub.**
+
+The `.cursor/` directory contains IDE-specific configuration (rules, settings) that:
+- May contain user-specific paths
+- Are not relevant to the deployed application
+- Should remain local to each developer's environment
+
+Ensure `.cursor/` is in `.gitignore`.
+
+---
+
 ## See Also
 
 - `docs/spec.md` - Product requirements, features, hub/questionnaire specs
