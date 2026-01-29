@@ -16,19 +16,29 @@
 ├── index.html              # Hub page (questionnaire directory)
 ├── styles.css              # Hub-only styles
 ├── shared.css              # Minimal shared styles (tokens + buttons)
+├── logo.avif               # Brand logo (100px hub, 56px questionnaires)
 ├── docs/
-│   ├── spec.md
-│   ├── design.md
-│   └── retro.md            # Retrospective, workflow insights, session logs
-├── proactiveness/          # Questionnaire 1
+│   ├── spec.md             # Requirements and features
+│   ├── tech-design.md      # This file - technical implementation
+│   ├── rules.md            # Workflow recommendations
+│   └── retro.md            # Retrospective, session logs
+├── proactiveness/          # Questionnaire: מנוף הפרואקטיביות
 │   ├── index.html
 │   ├── styles.css          # Imports ../shared.css + local overrides
+│   ├── app.js              # Logic only
+│   ├── content.json        # Hebrew content
+│   └── README.md           # Questionnaire-specific structure
+├── communication-styles/   # Questionnaire: סגנונות תקשורת
+│   ├── index.html
+│   ├── styles.css
 │   ├── app.js
-│   └── README.md           # Documents this questionnaire's specific structure
-└── [future-questionnaire]/ # Same structure
+│   ├── content.json
+│   └── README.md
+└── situational-leadership/ # Questionnaire: ניהול מצבי
     ├── index.html
     ├── styles.css
     ├── app.js
+    ├── content.json
     └── README.md
 ```
 
@@ -235,6 +245,12 @@ Radio buttons styled as selectable pills.
 #### Buttons (in `shared.css`)
 Two variants: primary (filled) and ghost (outlined). Defined in shared styles.
 
+**Design Decision: Simplified Button Style**
+- No shadow on buttons
+- No movement/transform on hover
+- Only color darken on hover
+- Rationale: Cleaner, less distracting, works better across all contexts
+
 ```css
 .primary, .ghost {
   padding: 12px 24px;
@@ -258,6 +274,20 @@ Two variants: primary (filled) and ghost (outlined). Defined in shared styles.
   background: transparent;
   color: var(--primary);
   border: 1px solid var(--border);
+}
+```
+
+#### Action Button Layout
+For equal-width buttons in action rows:
+
+```css
+.results-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.results-actions > * {
+  flex: 1;  /* Equal width distribution */
 }
 ```
 
@@ -296,6 +326,42 @@ Every questionnaire needs a link back to the hub.
 ```
 
 **Recommendation:** Option A (always visible) for better UX.
+
+---
+
+### 4. Question 1 Navigation Pattern
+
+On the first question, show "חזרה להנחיות" (back to instructions) instead of a disabled previous button.
+
+```javascript
+// In navigation logic
+if (currentIndex === 0) {
+  prevBtn.textContent = 'חזרה להנחיות';
+  prevBtn.onclick = () => showScreen('intro');
+} else {
+  prevBtn.textContent = 'הקודם';
+  prevBtn.onclick = () => navigate(-1);
+}
+```
+
+**Rationale:** Provides useful action on Q1 instead of dead button.
+
+---
+
+### 5. Logo Sizing
+
+| Location | Size | Rationale |
+|----------|------|-----------|
+| Hub page | 100px | Brand presence, focal point |
+| Questionnaire header | 56px | Subtle, doesn't compete with content |
+
+```css
+/* Hub */
+.hub-header__logo img { width: 100px; }
+
+/* Questionnaire */
+.app__header img { width: 56px; }
+```
 
 ---
 
@@ -364,7 +430,12 @@ const typeDescription = content.types[typeId].description;
 - Number and type of result screens
 - Analysis categories and interpretation logic
 
-**Pattern extraction:** Once we have 2-3 questionnaires, we can identify recurring patterns and decide what to generalize.
+**Pattern extraction:** With 3 questionnaires now complete, patterns are emerging:
+- Content separation (content.json) is mandatory
+- Screen flow pattern is consistent
+- Q1 "back to instructions" is standard
+TODO: continue to identify recurring patterns 
+and decide what to generalize.
 
 ---
 
@@ -414,4 +485,6 @@ Google Fonts loaded via CSS `@import` or `<link>`:
 ## See Also
 
 - `docs/spec.md` - Product requirements, features, hub/questionnaire specs
-- `proactiveness/README.md` - First questionnaire's specific data model and patterns
+- `docs/rules.md` - Workflow rules and recommendations
+- `docs/retro.md` - Session logs and accumulated learnings
+-

@@ -39,7 +39,7 @@ A vanilla HTML/CSS/JS hub for personality questionnaires. Each questionnaire is 
 - No build tools, no frameworks - vanilla everything
 - Mobile-ready by default
 
-See `docs/design.md` for implementation details.
+See `docs/tech-design.md` for implementation details.
 
 ---
 
@@ -86,10 +86,25 @@ Each questionnaire is a single-page app with multiple screens. The specific stru
 - **Progress indication:** Visual feedback during question answering
 - **Navigation:** Back to hub link, prev/next within questionnaire
 - **Results export:** "העתק תוצאות" button copies Markdown to clipboard
+- **Question 1 behavior:** Show "חזרה להנחיות" (back to instructions) button instead of disabled prev button
+
+### Content Separation (Required)
+
+All Hebrew content must be stored separately from JavaScript logic:
+- **`content.json`** - Questions, category descriptions, analysis text, recommendations
+- **`app.js`** - Logic only (scoring, navigation, DOM manipulation)
+
+This pattern ensures content editors can modify Hebrew text without touching code.
+
+### Visual Standards
+
+- **Button style:** No shadow, no movement; just color darken on hover
+- **Logo sizing:** Hub page 100px, questionnaire headers 56px
+- **Action button layout:** Use `flex: 1` for equal-width buttons in action rows
 
 ### What Varies Per Questionnaire
 
-- Question format (bipolar scale, multiple choice, etc.)
+- Question format (bipolar scale, multiple choice, yes/no, etc.)
 - Scoring algorithm and categories
 - Number and type of result/analysis screens
 - Interpretation logic
@@ -121,11 +136,11 @@ Example: `proactiveness/README.md`
 
 ## Current Questionnaires
 
-| Name | Folder | Status |
-|------|--------|--------|
-| מנוף הפרואקטיביות | `/proactiveness` | ✅ Complete |
-| סגנונות תקשורת | `/communication-styles` | 🚧 In Progress |
-| שאלון ניהול מצבי | `/situational-leadership` | 🚧 In Progress |
+| Name | Folder | Status | Content Separation |
+|------|--------|--------|-------------------|
+| מנוף הפרואקטיביות | `/proactiveness` | ✅ Complete | ✅ |
+| סגנונות תקשורת | `/communication-styles` | ✅ Complete | ✅ |
+| שאלון ניהול מצבי | `/situational-leadership` | ✅ Complete | ✅ |
 
 ---
 
@@ -141,5 +156,6 @@ Example: `proactiveness/README.md`
 
 ## See Also
 
-- `docs/design.md` - Technical implementation details, component patterns
-- `proactiveness/README.md` - First questionnaire's specific structure
+- `docs/tech-design.md` - Technical implementation details, component patterns
+- `docs/rules.md` - Workflow rules and recommendations
+
