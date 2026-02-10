@@ -155,6 +155,48 @@
   line-height: 1;
 }
 
+.questionnaire-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.questionnaire-card__copy-link {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.questionnaire-card__copy-link:hover {
+  color: var(--primary);
+  background: rgba(76, 102, 255, 0.08);
+}
+
+.questionnaire-card__copy-link:active {
+  background: rgba(76, 102, 255, 0.12);
+}
+
+.questionnaire-card__copy-link.copied {
+  color: var(--primary);
+}
+
+.questionnaire-card__copy-icon {
+  display: block;
+  pointer-events: none;
+}
+
 .questionnaire-card__title {
   margin: 0;
   font-size: 22px;
@@ -198,8 +240,7 @@
 }
 
 .questionnaire-card__cta {
-  align-self: flex-start;
-  margin-top: 8px;
+  /* lives in __actions row */
 }
 
 /* Coming Soon Card */
