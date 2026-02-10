@@ -4,6 +4,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../../lib/testmode.js';
+import { applyBackToHubLinks } from '../../lib/back-to-hub.js';
 import { isMobile, copyAsMarkdown, copyAsRichText, shareNative, canShare } from '../../lib/share.js';
 
 // Content loaded from JSON
@@ -54,6 +55,7 @@ async function loadContent() {
 }
 
 function initializeApp() {
+  applyBackToHubLinks();
   // Add test mode indicator if active
   if (isTestMode()) {
     insertTestModeIndicator();

@@ -247,6 +247,55 @@
    Responsive
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   Landing (no-token view)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.hub-landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.hub-landing__logo {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+
+.hub-landing__title {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.hub-landing__subtitle {
+  margin: 0 0 32px;
+  font-size: 18px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.hub-landing__quote {
+  max-width: 360px;
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 @media (max-width: 640px) {
   .hub-header {
     padding: 32px 20px 24px;

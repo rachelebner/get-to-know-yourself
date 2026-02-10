@@ -4,6 +4,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../../lib/testmode.js';
+import { applyBackToHubLinks } from '../../lib/back-to-hub.js';
 import { copyAsMarkdown, copyAsRichText, shareNative, createShareButtons } from '../../lib/share.js';
 
 let content = null;
@@ -330,6 +331,7 @@ const initApp = async () => {
     setupEventListeners();
     setupShareButtons();
 
+    applyBackToHubLinks();
     // Test mode integration
     if (isTestMode()) {
       insertTestModeIndicator();

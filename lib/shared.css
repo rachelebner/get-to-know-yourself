@@ -89,6 +89,26 @@ body {
    Header Badge & Test Mode Indicator
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* When back-to-hub link is hidden (shared questionnaire link), keep logo + badge centered */
+.app__header--no-back-link {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+.app__header--no-back-link > .app__logo,
+.app__header--no-back-link > .app__badge {
+  flex: 0 0 auto;
+}
+
+.app__header--no-back-link > h1,
+.app__header--no-back-link > .app__subtitle {
+  width: 100%;
+  text-align: center;
+}
+
 .badge-row {
   display: flex;
   align-items: center;

@@ -4,6 +4,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../../lib/testmode.js';
+import { applyBackToHubLinks } from '../../lib/back-to-hub.js';
 import { isMobile, copyAsMarkdown, copyAsRichText, shareNative, canShare } from '../../lib/share.js';
 
 let content = null;
@@ -48,12 +49,13 @@ const updateScreen = (screen) => {
 };
 
 const initApp = async () => {
+  applyBackToHubLinks();
   // Add test mode indicator if active
   if (isTestMode()) {
     insertTestModeIndicator();
     updateBackLinks();
   }
-  
+
   try {
     const response = await fetch("./content.json");
     content = await response.json();

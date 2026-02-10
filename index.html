@@ -12,7 +12,13 @@
     <link rel="stylesheet" href="hub.css" />
   </head>
   <body>
-    <div class="hub">
+    <div id="hub-landing" class="hub-landing" style="display:none;">
+      <img src="./logo.avif" alt="מרכז השאלונים - מירב ים חן" class="hub-landing__logo" />
+      <h1 class="hub-landing__title">מרכז השאלונים</h1>
+      <p class="hub-landing__subtitle">מירב ים חן</p>
+      <p class="hub-landing__quote">הצעד הראשון לצמיחה הוא להכיר את עצמך.</p>
+    </div>
+    <div class="hub" id="hub-main" style="display:none;">
       <header class="hub-header">
         <div class="hub-header__logo">
           <img src="./logo.avif" alt="מרכז השאלונים - מירב ים חן" class="hub-header__logo-img" />
@@ -166,6 +172,14 @@
       </footer>
     </div>
 
+    <script>
+      (function(){
+        var _0=atob('bWVpcmF2eWM=');
+        var _1=typeof URLSearchParams!=='undefined'&&location.search?(new URLSearchParams(location.search).get('access')||''):'';
+        var el=document.getElementById('hub-landing'),em=document.getElementById('hub-main');
+        if(_1!==_0){ if(el)el.style.display=''; } else{ if(em)em.style.display=''; }
+      })();
+    </script>
     <script type="module">
       import { isTestMode, getTestModeUrl, toggleTestMode } from './lib/testmode.js';
 

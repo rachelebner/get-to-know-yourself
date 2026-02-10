@@ -1,4 +1,5 @@
 import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../../lib/testmode.js';
+import { applyBackToHubLinks } from '../../lib/back-to-hub.js';
 import { isMobile, copyAsMarkdown, copyAsRichText, shareNative, canShare } from '../../lib/share.js';
 
 let content = null;
@@ -447,12 +448,13 @@ const setupShareButtons = () => {
 };
 
 const initApp = async () => {
+  applyBackToHubLinks();
   // Add test mode indicator if active
   if (isTestMode()) {
     insertTestModeIndicator();
     updateBackLinks();
   }
-  
+
   content = await fetch("./content.json").then((r) => r.json());
   answers = new Array(content.questions.length).fill(null);
   

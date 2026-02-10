@@ -4,6 +4,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../../lib/testmode.js';
+import { applyBackToHubLinks } from '../../lib/back-to-hub.js';
 import { isMobile, copyAsMarkdown, copyAsRichText, shareNative, canShare, createShareButtons } from '../../lib/share.js';
 
 let content = null;
@@ -35,13 +36,14 @@ const backToQuestionsButton = document.getElementById("back-to-questions");
 // ═══════════════════════════════════════════════════════════════════════════
 
 async function init() {
+  applyBackToHubLinks();
   try {
     const response = await fetch("./content.json");
     content = await response.json();
     answers = new Array(content.questions.length).fill(null);
     populateUI();
     setupEventListeners();
-    
+
     // Test mode integration
     if (isTestMode()) {
       insertTestModeIndicator();
