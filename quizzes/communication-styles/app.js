@@ -431,7 +431,7 @@ function setupShareEventListeners() {
     
     try {
       if (action === 'copy-markdown') {
-        await copyAsMarkdown(markdown);
+        await (isMobile() ? copyAsMarkdown(markdown) : copyAsRichText(html));
       } else if (action === 'copy-richtext') {
         await copyAsRichText(html);
       } else if (action === 'share-native') {

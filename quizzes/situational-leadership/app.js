@@ -537,7 +537,7 @@ function setupShareButtons() {
     `;
 
     shareButtonsContainer.querySelector('[data-action="copy-markdown"]')?.addEventListener('click', async () => {
-      await copyAsMarkdown(markdown);
+      await copyAsRichText(richText);
     });
   }
 }

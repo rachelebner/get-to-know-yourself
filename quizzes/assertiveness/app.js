@@ -5,7 +5,7 @@
 
 import { isTestMode, insertTestModeIndicator, updateBackLinks } from '../../lib/testmode.js';
 import { applyBackToHubLinks } from '../../lib/back-to-hub.js';
-import { copyAsMarkdown, copyAsRichText, shareNative, createShareButtons } from '../../lib/share.js';
+import { isMobile, copyAsMarkdown, copyAsRichText, shareNative, createShareButtons } from '../../lib/share.js';
 
 let content = null;
 let currentIndex = 0;
@@ -304,7 +304,7 @@ const setupShareEventListeners = () => {
 
     try {
       if (action === 'copy-markdown') {
-        await copyAsMarkdown(markdown);
+        await (isMobile() ? copyAsMarkdown(markdown) : copyAsRichText(html));
       } else if (action === 'copy-richtext') {
         await copyAsRichText(html);
       } else if (action === 'share-native') {
